@@ -14,6 +14,7 @@ What's in this fork?
 - Provided ability to configure `zola` via `config.toml`
 - Enabled russian search support (by changing `default_language` to `ru` in `config.toml`)
 - Added support for non-root base urls
+- Provided [Dockerfile](./Dockerfile) for generating images for GitHub/GitLab Pages.
 
 Credits:
 * This repo was forked from [obsidian-zola-plus](https://github.com/Yarden-zamir/obsidian-zola-plus).
