@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 die() {
 	echo >&2 error: "$@"
@@ -19,7 +19,7 @@ check_prog obsidian-export
 : ${REPO_URL:?}
 : ${LANDING_PAGE:?}
 
-[[ -e "./config.toml" ]] || die "Zola configuration file is absent"
+[ -e "./config.toml" ] || die "Zola configuration file is absent"
 
 rsync -a config.toml build/
 rsync -a zola/ build
