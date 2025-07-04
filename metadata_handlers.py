@@ -5,8 +5,6 @@ You can use existing elements or create new ones, just make sure to also create 
 """
 from random import choice, seed
 
-from requests import get
-
 
 def modified(date: str) -> str:
     """Converts date into html format element"""
@@ -48,6 +46,7 @@ def rating(value):
 
 
 def _rich_link_card(url: str, type_annotation="🧠") -> str:
+    from requests import get
     try:
         resp = get(f"http://iframely.server.crestify.com/iframely?url={url}").json()
         image = [link['href'] for link in resp['links'] if
