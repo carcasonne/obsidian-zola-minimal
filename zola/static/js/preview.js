@@ -105,11 +105,6 @@ function getPreviewUniqueClass(previewDiv) {
     return previewDiv.classList.item(previewDiv.classList.length - 1);
 }
 
-function isDocLink(href) {
-    const test = new URL(href);
-    return test.pathname.startsWith("/docs/");
-}
-
 function hidePreview(previewDiv) {
     try {
         document.body.removeChild(previewDiv);
@@ -129,9 +124,7 @@ function initPreview(query = ".docs-content a") {
     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) return;
 
     document.querySelectorAll(query).forEach((a) => {
-        if (isDocLink(a.href)) {
-            a.addEventListener("mouseover", (e) => showPreview(e, a), false);
-        }
+        a.addEventListener("mouseover", (e) => showPreview(e, a), false);
     });
 }
 
