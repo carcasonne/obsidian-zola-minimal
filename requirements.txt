@@ -1,0 +1,4 @@
+python-slugify==8.0.4
+PyYAML==6.0.2
+rtoml==0.11.0
+text-unidecode==1.3
