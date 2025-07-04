@@ -164,13 +164,11 @@ class DocLink:
         def decide_internal_link_format(link: "DocLink") -> Tuple[str, str]:
             abs_url = link.abs_url(doc_path)
 
-            real_url = abs_url
-
             # use shortcode for videos
             if any(link.title.endswith(ext) for ext in (".webm", ".mp4")):
-                return abs_url, r"{{ " + f'video(url="{real_url}", alt="{link.title}")' + r" }}"
+                return abs_url, r"{{ " + f'video(url="{abs_url}", alt="{link.title}")' + r" }}"
 
-            return abs_url, f"[{link.title}]({real_url}{link.header})"
+            return abs_url, r"{{ " + f'abs_url(abs="{abs_url}{link.header}", text="{link.title}")' + r" }}"
 
 
         for link in cls.get_links(line):
@@ -513,6 +511,9 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
         )
     }
 
+    base_url = Settings.options['SITE_URL']
+    non_root_start = base_url.find('/')
+    non_root_part = base_url[non_root_start:] if non_root_start != -1 else ''
     # Generate graph data
     graph_info = {
         "nodes": [
@@ -520,6 +521,7 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
                 "id"     : node_ids[url],
                 "label"  : title,
                 "url"    : url,
+                "root_url": non_root_part + url,
                 "color"  : PASTEL_COLORS[top_nodes[url]] if url in top_nodes else None,
                 "value"  : math.log10(edge_counts[url] + 1) + 1,
                 "opacity": 0.1,

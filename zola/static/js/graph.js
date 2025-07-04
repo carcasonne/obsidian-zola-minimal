@@ -19,7 +19,7 @@ var container = document.getElementById("graph");
 // Parse nodes and edges
 try {
     var curr_node = graph_data.nodes.filter(
-        (node) => decodeURI(node.url).toLowerCase() == curr_url //TODO: when I fix case in url fix this
+        (node) => curr_url.toLowerCase().endsWith(decodeURI(node.url).toLowerCase())
     );
 } catch (error) {
     var curr_node = null;
@@ -93,9 +93,9 @@ graph.on("selectNode", function (params) {
     if (params.nodes.length === 1) {
         var node = nodes.get(params.nodes[0]);
         if (graph_link_replace) {
-            window.open(node.url, "_self");
+            window.open(node.root_url, "_self");
         } else {
-            window.open(node.url, "_self");
+            window.open(node.root_url, "_self");
         }
     }
 });
