@@ -11,6 +11,8 @@ What's in this fork?
 - Configuration is done with enviromental variables.
 - Uploaded to repo binaries are deleted, system ones are used.
 - Removed any possibility to interact with website other than reading and traversing.
+- Provided ability to configure `zola` via `config.toml`
+- Enabled russian search support (by changing `default_language` to `ru` in `config.toml`)
 
 Credits:
 * This repo was forked from [obsidian-zola-plus](https://github.com/Yarden-zamir/obsidian-zola-plus).

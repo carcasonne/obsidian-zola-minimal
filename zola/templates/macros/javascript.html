@@ -4,6 +4,10 @@
 <script src="{{ get_url(path="js/preview.js") | safe }}" defer></script>
 {% if config.build_search_index %}
   <script src="{{ get_url(path="plugins/elasticlunr.min.js") | safe }}" defer></script>
+  <script src="{{ get_url(path="plugins/lunr.stemmer.support.js") | safe }}" defer></script>
+{% if config.default_language != 'en' %}
+  <script src="{{ get_url(path="plugins/lunr." ~ lang ~ ".js") | safe }}" defer></script>
+{% endif %}
   <script src="{{ get_url(path="search_index." ~ lang ~ ".js") | safe }}" defer></script>
   <script src="{{ get_url(path="js/search.js") | safe }}" defer></script>
 {% endif %}
