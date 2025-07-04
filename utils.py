@@ -161,19 +161,22 @@ class DocLink:
         parsed = line
         linked: List[str] = []
 
-        for link in cls.get_links(line):
+        def decide_internal_link_format(link: "DocLink") -> Tuple[str, str]:
             abs_url = link.abs_url(doc_path)
 
+            real_url = abs_url
+
+            # use shortcode for videos
             if any(link.title.endswith(ext) for ext in (".webm", ".mp4")):
-                # use shortcode for videos
-                parsed = parsed.replace(
-                    link.combined,
-                    r"{{ " + f'video(url="{abs_url}", alt="{link.title}")' + r" }}",
-                )
-            else:
-                parsed = parsed.replace(
-                    link.combined, f"[{link.title}]({abs_url}{link.header})"
-                )
+                return abs_url, r"{{ " + f'video(url="{real_url}", alt="{link.title}")' + r" }}"
+
+            return abs_url, f"[{link.title}]({real_url}{link.header})"
+
+
+        for link in cls.get_links(line):
+            abs_url, replace_with = decide_internal_link_format(link)
+
+            parsed = parsed.replace(link.combined, replace_with)
 
             linked.append(abs_url)
 
