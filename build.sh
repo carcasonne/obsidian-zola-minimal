@@ -14,10 +14,10 @@ check_prog rsync
 check_prog python
 check_prog obsidian-export
 
-: ${VAULT:?}
-: ${SITE_URL:?}
-: ${REPO_URL:?}
-: ${LANDING_PAGE:?}
+echo "${VAULT:?}"
+echo "${SITE_URL:?}"
+echo "${REPO_URL:?}"
+echo "${LANDING_PAGE:?}"
 
 [ -e "./config.toml" ] || die "Zola configuration file is absent"
 
@@ -28,9 +28,9 @@ rsync -a content/ build/content
 # Use obsidian-export to export markdown content from obsidian
 mkdir -p build/content/docs build/__docs
 if [ -z "$STRICT_LINE_BREAKS" ]; then
-	obsidian-export --frontmatter=never --hard-linebreaks --no-recursive-embeds $VAULT build/__docs
+	obsidian-export --frontmatter=never --hard-linebreaks --no-recursive-embeds "$VAULT" build/__docs
 else
-	obsidian-export --frontmatter=never --no-recursive-embeds $VAULT build/__docs
+	obsidian-export --frontmatter=never --no-recursive-embeds "$VAULT" build/__docs
 fi
 
 python convert.py
