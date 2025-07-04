@@ -92,11 +92,13 @@ var graph = new vis.Network(
 graph.on("selectNode", function (params) {
     if (params.nodes.length === 1) {
         var node = nodes.get(params.nodes[0]);
+        var mode = ""
         if (graph_link_replace) {
-            window.open(node.root_url, "_self");
+            mode = "_self"
         } else {
-            window.open(node.root_url, "_self");
+            mode ="_blank";
         }
+        window.open(node.root_url, mode);
     }
 });
 
