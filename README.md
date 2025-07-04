@@ -37,7 +37,13 @@ Credits:
   ```
 
 - Make sure `obsidian-export` is [installed](https://github.com/zoni/obsidian-export?tab=readme-ov-file#installation) and in your `PATH`
+
 - Make sure `zola` is [installed](https://www.getzola.org/documentation/getting-started/installation/) and in your `PATH`
+- Setup `zola` configuration with `config.toml` as explained in `config.toml.sample`
+  ```sh
+  cp ./config.toml{.sample,}
+  ```
+
 - Run `build.sh` to build static website in `public` directory
 
 # Local Testing (Ubuntu)

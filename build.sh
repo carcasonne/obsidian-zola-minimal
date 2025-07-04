@@ -17,7 +17,10 @@ check_prog obsidian-export
 [[ -n "${VAULT}" ]] || die "Path to the obsidian vault is not set"
 [[ -n "${SITE_URL}" ]] || die "Site url is not set"
 [[ -n "${REPO_URL}" ]] || die "Repository url is not set"
+[[ -n "${LANDING_PAGE}" ]] || die "Landing page is not set"
+[[ -e "./config.toml" ]] || die "Zola configuration file is absent"
 
+rsync -a config.toml build/
 rsync -a zola/ build
 rsync -a content/ build/content
 

@@ -1,3 +1,6 @@
+# Configuration parameters can be found here:
+# https://www.getzola.org/documentation/getting-started/configuration/
+
 base_url = "___SITE_URL___"
 title = "___SITE_TITLE___"
 
@@ -16,6 +19,8 @@ include_title = true
 
 [markdown]
 highlight_code = true
+bottom_footnotes = true
+insert_anchor_links = "heading"
 
 [extra]
 home_graph = "___HOME_GRAPH___"

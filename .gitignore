@@ -1,6 +1,7 @@
-# Configuration file
+# Configuration files
 
 env.sh
+config.toml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
