@@ -14,10 +14,11 @@ check_prog rsync
 check_prog python
 check_prog obsidian-export
 
-[[ -n "${VAULT}" ]] || die "Path to the obsidian vault is not set"
-[[ -n "${SITE_URL}" ]] || die "Site url is not set"
-[[ -n "${REPO_URL}" ]] || die "Repository url is not set"
-[[ -n "${LANDING_PAGE}" ]] || die "Landing page is not set"
+: ${VAULT:?}
+: ${SITE_URL:?}
+: ${REPO_URL:?}
+: ${LANDING_PAGE:?}
+
 [[ -e "./config.toml" ]] || die "Zola configuration file is absent"
 
 rsync -a config.toml build/
