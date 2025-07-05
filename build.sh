@@ -19,11 +19,23 @@ echo "${SITE_URL:?}"
 echo "${REPO_URL:?}"
 echo "${LANDING_PAGE:?}"
 
-[ -e "./config.toml" ] || die "Zola configuration file is absent"
+ZOLACFG="config.toml"
+
+if ! test -f "$ZOLACFG"; then
+	if ! test -f "$VAULT/config.toml"; then
+		echo "Zola configuration file not found, using default settings";
+		ZOLACFG="./${ZOLACFG}.sample";
+	else
+		echo "Zola configuration file found in vault";
+		ZOLACFG="$VAULT/config.toml";
+	fi;
+fi
 
 OUTPUT_DIR="${1:-public}"
 
-rsync -a config.toml build/
+mkdir -p build
+
+rsync -a "$ZOLACFG" build/config.toml
 rsync -a zola/ build
 rsync -a content/ build/content
 
