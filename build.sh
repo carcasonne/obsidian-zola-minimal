@@ -31,8 +31,6 @@ if ! test -f "$ZOLACFG"; then
 	fi;
 fi
 
-OUTPUT_DIR="${1:-public}"
-
 mkdir -p build
 
 rsync -a "$ZOLACFG" build/config.toml
@@ -49,4 +47,4 @@ fi
 
 python convert.py
 
-zola --root build build --output-dir "$OUTPUT_DIR"
+zola --root build build "$@"
