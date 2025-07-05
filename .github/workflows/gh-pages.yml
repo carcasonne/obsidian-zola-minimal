@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build --tag obsidian-zola .
+          docker run --rm \
+            --volume "$(pwd)/_site":/output \
+            --volume "$GITHUB_WORKSPACE/.github/lorem":/vault                          \
+            --env SITE_URL="$(gh api repos/$GITHUB_REPOSITORY/pages --jq '.html_url')" \
+            --env REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"                     \
+            --env-file "$GITHUB_WORKSPACE/.github/lorem/build.env"                     \
+            obsidian-zola                 \
+            --force                       \
+            --output-dir /output/public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site/public
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        id: deployment
+        with:
+          artifact_path: ./_site/public
