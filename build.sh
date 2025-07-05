@@ -21,6 +21,8 @@ echo "${LANDING_PAGE:?}"
 
 [ -e "./config.toml" ] || die "Zola configuration file is absent"
 
+OUTPUT_DIR="${1:-public}"
+
 rsync -a config.toml build/
 rsync -a zola/ build
 rsync -a content/ build/content
@@ -35,4 +37,4 @@ fi
 
 python convert.py
 
-zola --root build build --output-dir public
+zola --root build build --output-dir "$OUTPUT_DIR"
