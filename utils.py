@@ -5,7 +5,6 @@ import re
 import shutil
 from dataclasses import dataclass
 from datetime import datetime
-from distutils.util import strtobool
 from inspect import getmembers, isfunction
 from os import environ
 from pathlib import Path
@@ -167,6 +166,10 @@ class DocLink:
             # use shortcode for videos
             if any(link.title.endswith(ext) for ext in (".webm", ".mp4")):
                 return abs_url, r"{{ " + f'video(url="{abs_url}", alt="{link.title}")' + r" }}"
+            
+            # use markdown image syntax for images
+            if any(link.url.lower().endswith(ext) for ext in (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".bmp")):
+                return abs_url, f"![{link.title}]({abs_url})"
 
             return abs_url, r"{{ " + f'abs_url(abs="{abs_url}{link.header}", text="{link.title}")' + r" }}"
 
@@ -411,7 +414,9 @@ class Settings:
     def is_true(cls, key: str) -> bool:
         """Returns whether an option's string value is true."""
         val = cls.options[key]
-        return bool(strtobool(val)) if val else False
+        if not val:
+            return False
+        return val.lower() in ('true', '1', 'yes', 'y', 'on')
 
     @classmethod
     def parse_env(cls):
