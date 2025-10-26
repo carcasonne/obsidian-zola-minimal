@@ -4,53 +4,42 @@
 
 # obsidian-zola-minimal
 
-A free (means better) alternative to Obsidian Publish. This repo contains an easy-to-use (read: simplistic) solution for converting an Obsidian Personal Knowledge Management System (read: bunch of random Markdowns) into a Zola site.
+A tool for converting an Obsidian vault to Zola-compatible markdown with as little tinkering as possible. Also builds the actual Zola files using the provided theme.
 
-What's in this fork?
-- Removed any mention of netlify.
-- Configuration is done with enviromental variables.
-- Uploaded to repo binaries are deleted, system ones are used.
-- Removed any possibility to interact with website other than reading and traversing.
-- Provided ability to configure `zola` via `config.toml`
-- Enabled russian search support (by changing `default_language` to `ru` in `config.toml`)
-- Added support for non-root base urls
-- Provided [Dockerfile](./Dockerfile) for generating images for GitHub/GitLab Pages.
+Includes my own custom theme (well, it is going to be my theme over time. To start of I am just using the forked theme).
+
+This fork is a fork of `SherAndrei`'s fork. My changes, currently, are:
+- Added embedded image support (no longer just a link to the ressource).
+- Added python venv support by default, so you don't have to install packages to your system python.
 
 Credits:
-* This repo was forked from [obsidian-zola-plus](https://github.com/Yarden-zamir/obsidian-zola-plus).
+* This repo was forked from [obsidian-zola-plus](https://github.com/SherAndrei/obsidian-zola-minimal).
 * Wikilink parsing is powered by [obsidian-export](https://github.com/zoni/obsidian-export).
 
 # Setup
 
-- Turn your Obsidian vault folder into a Git repository
 - Setup environment variables as explained in `env.sh.sample`
   ```sh
   cp ./env.sh{.sample,}
   . ./env.sh
   ```
-
-- Make sure `python` is [installed](https://www.python.org/downloads/) and in your `PATH`
-  ```
-  $ python --version
-  Python 3.12.2
-  ```
-
-- Install required `python` packages
-  ```sh
-  python -m pip install -r ./requirements.txt
-  ```
-
-- Make sure `obsidian-export` is [installed](https://github.com/zoni/obsidian-export?tab=readme-ov-file#installation) and in your `PATH`
-
-- Make sure `zola` is [installed](https://www.getzola.org/documentation/getting-started/installation/) and in your `PATH`
 - Setup `zola` configuration with `config.toml` as explained in `config.toml.sample`
   ```sh
   cp ./config.toml{.sample,}
   ```
+- Create a python virtual environment and install the required packages:
+  ```sh
+  python -m venv ./venv
+  source ./venv/bin/activate
+  pip install -r ./requirements.txt
+  ```
+- Make sure `obsidian-export` is [installed](https://github.com/zoni/obsidian-export?tab=readme-ov-file#installation) and in your `PATH`
 
-- Run `build.sh` to build static website in `public` directory
+- Make sure `zola` is [installed](https://www.getzola.org/documentation/getting-started/installation/) and in your `PATH`
 
-# Local Testing (Ubuntu)
+- Run `build.sh` to build static website in `public` directory (make sure `. ./env.sh` has been run in the same context)
+
+# Local Testing
 
 - After setup steps run `zola`:
   ```sh
@@ -73,6 +62,7 @@ Credits:
 - Single-line footnotes (i.e. `[^1]` in the paragraph and `[^1]: xxx` later)
 - Checkboxes
 - Link escaping pattern: `[Slides Demo](<Slides Demo>)`
+- Image embeds
 
 **Unsupported**
 
