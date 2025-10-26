@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 die() {
 	echo >&2 error: "$@"
@@ -14,10 +14,19 @@ check_prog rsync
 check_prog python
 check_prog obsidian-export
 
+if [ -d "venv" ]; then
+    PYTHON="venv/bin/python"
+elif [ -d ".venv" ]; then
+    PYTHON=".venv/bin/python"
+else
+    PYTHON="python"
+fi
+
 echo "${VAULT:?}"
 echo "${SITE_URL:?}"
 echo "${REPO_URL:?}"
 echo "${LANDING_PAGE:?}"
+echo "${PYTHON:?}"
 
 ZOLACFG="config.toml"
 
@@ -45,6 +54,6 @@ else
 	obsidian-export --frontmatter=never --no-recursive-embeds "$VAULT" build/__docs
 fi
 
-python convert.py
+$PYTHON convert.py
 
 zola --root build build "$@"
