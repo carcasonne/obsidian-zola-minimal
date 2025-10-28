@@ -2,11 +2,6 @@
 
 {% endmacro %}
 
-
-{% macro stylesheet() %}
-<link rel="stylesheet" href="{{ get_url(path="main.css") | safe }}">
-{% endmacro %}
-
 {% macro links() %}
 {% if page.extra.prerender %}
 {% for link in page.extra.prerender %}

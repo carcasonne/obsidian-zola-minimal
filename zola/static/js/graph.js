@@ -1,12 +1,3 @@
-// Query dark mode setting
-function isDark() {
-    return (
-        localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches)
-    );
-}
-
 // Get URL of current page and also current node
 var curr_url = decodeURI(window.location.href.replace(location.origin, ""));
 if (curr_url.endsWith("/")) {

@@ -57,7 +57,7 @@ if __name__ == "__main__":
                     f'title: "{doc_path.page_title}"',
                     f"date: {doc_path.modified}",
                     f"updated: {doc_path.modified}",
-                    "template: docs/page.html",
+                    "template: blog/page.html",
                     "extra:",
                     f"    prerender: {links}",
                     "---",
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             content = [
                 "---",
                 f'title: "{doc_path.section_title}"',
-                "template: docs/section.html",
+                "template: blog/section.html",
                 f"sort_by: {Settings.options['SORT_BY']}",
                 f"weight: {section_count}",
                 "extra:",
