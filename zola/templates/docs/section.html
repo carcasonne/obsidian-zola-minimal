@@ -18,6 +18,7 @@
         <article>
           <h1 class="text-center">{{ section.title | safe }}</h1>
           <div class="text-center">{{ section.content | safe }}</div>
+          <p>skibidi toilet</p>
           <div class="card-list">
             {% set index_path = current_path ~ "_index.md" | trim_start_matches(pat="/") %}
             {% set index = get_section(path=index_path) %}
