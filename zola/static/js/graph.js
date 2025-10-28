@@ -1,3 +1,12 @@
+// Query dark mode setting
+function isDark() {
+    return (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+    );
+}
+
 // Get URL of current page and also current node
 var curr_url = decodeURI(window.location.href.replace(location.origin, ""));
 if (curr_url.endsWith("/")) {
@@ -57,10 +66,17 @@ if (curr_node) {
     nodes.update({
         id: curr_node.id,
         value: Math.max(4, max_node_val * 2.5),
-        shape: "dot",
-        color: "#a6a7ed",
+        shape: "box",
+        color: {
+            background: "#08bdba",  // ox-cyan for current node
+            border: "#161616"
+        },
         font: {
-            strokeWidth: 1,
+            color: "#ffffff",  // White text on cyan background
+            strokeWidth: 0,
+        },
+        shapeProperties: {
+            borderRadius: 2
         },
         x: 0,
         y: 0,

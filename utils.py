@@ -376,36 +376,49 @@ class Settings:
         "ROOT_SECTION_NAME"    : "main",
         "GRAPH_OPTIONS"        : """
         {
-        	nodes: {
-        		shape: "dot",
-        		color: isDark() ? "#8c8e91" : "#dee2e6",
-        		font: {
-        			face: "Inter",
-        			color: isDark() ? "#c9cdd1" : "#616469",
-        			strokeColor: isDark() ? "#c9cdd1" : "#616469",
-        		},
-        		scaling: {
-        			label: {
-        				enabled: true,
-        			},
-        		},
-        	},
-        	edges: {
-        		color: { inherit: "both" },
-        		width: 0.8,
-        		smooth: {
-        			type: "continuous",
-        		},
-        		hoverWidth: 4,
-        	},
-        	interaction: {
-        		hover: true,
-        	},
-        	height: "100%",
-        	width: "100%",
-        	physics: {
-        		solver: "repulsion",
-        	},
+            nodes: {
+                shape: "box",
+                color: {
+                    background: "#f2f2f2",
+                    border: "#161616",
+                    highlight: {
+                        background: "#d0d0d0",
+                        border: "#08bdba"
+                    }
+                },
+                font: {
+                    face: "Inter",
+                    color: "#ffffff",
+                    strokeWidth: 0,
+                },
+                scaling: {
+                    label: {
+                        enabled: true,
+                    },
+                },
+                shapeProperties: {
+                    borderRadius: 2
+                }
+            },
+            edges: {
+                color: {
+                    color: "#90A4AE",
+                    highlight: "#000000"
+                },
+                width: 1.5,
+                smooth: {
+                    type: "continuous",
+                },
+                hoverWidth: 3,
+            },
+            interaction: {
+                hover: true,
+            },
+            height: "100%",
+            width: "100%",
+            physics: {
+                solver: "repulsion",
+            },
         }
         """,
     }
@@ -455,37 +468,16 @@ class Settings:
 #                                Knowledge Graph                               #
 # ---------------------------------------------------------------------------- #
 
-PASTEL_COLORS = [
-    # First tier
-    "#FFADAD",
-    "#FFD6A5",
-    "#FDFFB6",
-    "#CAFFBF",
-    "#9BF6FF",
-    "#A0C4FF",
-    "#BDB2FF",
-    "#FFC6FF",
-    # Second tier
-    "#FBF8CC",
-    "#FDE4CF",
-    "#FFCFD2",
-    "#F1C0E8",
-    "#CFBAF0",
-    "#A3C4F3",
-    "#90DBF4",
-    "#8EECF5",
-    "#98F5E1",
-    "#B9FBC0",
-    # Third tier
-    "#EAE4E9",
-    "#FFF1E6",
-    "#FDE2E4",
-    "#FAD2E1",
-    "#E2ECE9",
-    "#BEE1E6",
-    "#F0EFEB",
-    "#DFE7FD",
-    "#CDDAFD",
+OXOCARBON_COLORS = [
+    "#FF6F00",  # ox-orange
+    "#ee5396",  # ox-magenta
+    "#08bdba",  # ox-cyan
+    "#ff7eb6",  # ox-pink
+    "#0f62fe",  # ox-blue
+    "#673AB7",  # ox-purple-dark
+    "#42be65",  # ox-green
+    "#be95ff",  # ox-purple
+    "#FFAB91",  # ox-orange-light
 ]
 
 
@@ -512,7 +504,7 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
     top_nodes = {
         node_url: i
         for i, (node_url, _) in enumerate(
-            list(sorted(edge_counts.items(), key=lambda k: -k[1]))[: len(PASTEL_COLORS)]
+            list(sorted(edge_counts.items(), key=lambda k: -k[1]))[: len(OXOCARBON_COLORS)]
         )
     }
 
@@ -527,7 +519,7 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
                 "label"  : title,
                 "url"    : url,
                 "root_url": non_root_part + url,
-                "color"  : PASTEL_COLORS[top_nodes[url]] if url in top_nodes else None,
+                "color"  : OXOCARBON_COLORS[top_nodes[url]] if url in top_nodes else None,
                 "value"  : math.log10(edge_counts[url] + 1) + 1,
                 "opacity": 0.1,
             }

@@ -13,13 +13,16 @@ body.home {
 		z-index: 1;
 
 		div.home-background {
-			background: rgba(255,255,255,0.2);
+			background: rgba(255,255,255,0.85);
 			z-index: 2;
 			pointer-events: none;
 			> div > div > section > div > div.col-lg-9.col-xl-8.text-center >p{ 
 				//probably not the pretty way to do this, but it should work 
-				backdrop-filter: blur(1px) saturate(150%);
-				padding-bottom: 4%
+				backdrop-filter: blur(2px) saturate(150%);
+				padding-bottom: 4%;
+				background: rgba(255,255,255,0.75);
+				border: 1px solid var(--border-color);
+				padding: var(--space-3);
 			}
 		}
 
@@ -30,6 +33,19 @@ body.home {
 			top: 0px;
 			right: 0px;
 			z-index: -1;
+			opacity: 1;
+		}
+	}
+}
+
+body.dark.home {
+	> div.home {
+		div.home-background {
+			background: rgba(22,22,22,0.85);
+			
+			> div > div > section > div > div.col-lg-9.col-xl-8.text-center >p{ 
+				background: rgba(22,22,22,0.75);
+			}
 		}
 	}
 }
@@ -39,14 +55,20 @@ a {
 }
 
 div.docs-graph {
+	background-color: var(--bg-surface);
+	border: 2px solid var(--border-color);
+	padding: var(--space-2);
+	
 	@media (max-width: 767px) {
 		width: 100%;
 		aspect-ratio: 1.9;
 	}
 	// if desktop
 	@media (min-width: 768px) {
-		//margin-left: -80%;
-		//width: 180%;
 		aspect-ratio: 1;
+	}
+	
+	#graph {
+		opacity: 1 !important;
 	}
 }

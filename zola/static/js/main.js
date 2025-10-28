@@ -10,7 +10,7 @@ document.getElementById("mode").addEventListener("click", () => {
 
     // Update graph colors if exists
     if (graph) {
-        graph.setOptions({
+            graph.setOptions({
             nodes: {
                 color: isDark() ? "#8c8e91" : "#dee2e6",
                 font: {
