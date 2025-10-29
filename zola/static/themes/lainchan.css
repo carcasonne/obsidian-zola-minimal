@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'font';
+    src: url('/fonts/MonaSpace/MonaspaceArgon-Regular.woff') format('woff');
+    font-feature-setting:'cv06','cv14','cv16','cv27','cv29','cv31','cv32','ss01','ss02','ss04','ss06','ss07','ss09'!important;
+}
+
+@font-face {
+    font-family: 'font-secondary';
+    src: url('/fonts/BO CD Mono Light.otf') format('opentype');
+}
+
+:root {
+    /* Core background colors */
+    --bg-primary: #0b0f12;
+    --bg-secondary: #131a1a;
+    --primary-dark: #0a0e14;
+    --card-bg: rgba(18, 24, 28, 0.85);
+
+    /* Text colors */
+    --text-primary: #c7e6d7;
+    --text-muted: #7a8a94;
+    --text-header: #c7e6d7;
+    --text-secondary: #a0a0a0;
+
+    /* Accent colors */
+    --accent-primary: #00aeff;
+    --accent-secondary: #40a088;
+    --accent-tertiary: #bd00ff;
+    --accent-highlight: #18635d21;
+    --accent-highlight-text: #e8f5f0;
+
+    /* Themed color aliases */
+    --wired-green: rgba(64, 160, 136, 0.9);
+    --wired-blue: rgba(0, 174, 255, 0.7);
+    --accent-blue: #2a4e6c;
+    --glitch-color: rgba(255, 0, 89, 0.7);
+    --glitch-red: rgba(255, 0, 89, 0.7);
+
+    /* Borders and shadows */
+    --border-color: #283535;
+    --layer-glow: 0 0 3px rgba(64, 160, 136, 0.5);
+    --text-shadow: 0 0 2px var(--wired-green);
+    --static-opacity: 0.05;
+
+    /* Component dimensions */
+    --card-width: 280px;
+    --card-height: 240px;
+    --expanded-width: 320px;
+    --section-padding: 1.2rem;
+    --scrollbar-width: 6px;
+
+    /* Animation and transitions */
+    --card-transition: all 0.25s cubic-bezier(0.15, 0.8, 0.4, 1);
+
+    /* Typography */
+    --font-main: 'font';
+    --font-header: 'font-secondary';
+    --font-size: 14px;
+
+    /* Layout */
+    --width-sidebar: 240px;
+    --medium: 2rem;
+    --terminal-header-height: 36px;
+}
+

@@ -1,0 +1,163 @@
+<div class="connection-matrix">
+  <div class="matrix-container">
+    <div class="matrix-grid" id="matrix-grid"></div>
+  </div>
+</div>
+
+<style>
+.connection-matrix {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.matrix-header {
+  font-size: 10px;
+  color: var(--accent-secondary);
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.matrix-container {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+}
+
+.matrix-grid {
+  display: grid;
+  gap: 1px;
+  font-size: 8px;
+  font-family: monospace;
+}
+
+.matrix-cell {
+  width: 16px;
+  height: 16px;
+  background: var(--bg-primary);
+  border: 1px solid rgba(64, 160, 136, 0.2);
+  transition: all 0.1s;
+  cursor: pointer;
+}
+
+.matrix-cell[data-has-link="true"] {
+  background: var(--accent-secondary);
+}
+
+.matrix-cell:hover,
+.matrix-cell.highlight {
+  outline: 2px solid var(--accent-primary);
+  z-index: 10;
+}
+
+.matrix-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  padding: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matrix-label-row {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.matrix-label-col {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  height: 100px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.matrix-container {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+  width: 100%; /* force full width */
+}
+
+.matrix-grid {
+  display: grid;
+  gap: 1px;
+  font-size: 8px;
+  font-family: monospace;
+  min-width: 100%; /* stretch to container */
+}
+</style>
+
+<script>
+fetch('/js/graph_info.js')
+  .then(r => r.text())
+  .then(code => {
+    eval(code);
+    
+    const nodes = graph_data.nodes;
+    const edges = graph_data.edges;
+    const n = nodes.length;
+    
+    const grid = document.getElementById('matrix-grid');
+    const containerWidth = grid.parentElement.offsetWidth - 100; // minus label column
+    const cellSize = Math.max(12, Math.min(20, containerWidth / n)); // clamp between 12-20px
+    grid.style.gridTemplateColumns = `100px repeat(${n}, ${cellSize}px)`;
+
+    // also update cell dimensions
+    document.querySelectorAll('.matrix-cell').forEach(cell => {
+    cell.style.width = `${cellSize}px`;
+    cell.style.height = `${cellSize}px`;
+    });
+    
+    // corner
+    const corner = document.createElement('div');
+    grid.appendChild(corner);
+    
+    // col headers
+    nodes.forEach((node, i) => {
+      const label = document.createElement('div');
+      label.className = 'matrix-label matrix-label-col';
+      label.textContent = node.label.substring(0, 12);
+      label.dataset.col = i;
+      label.title = node.label;
+      grid.appendChild(label);
+    });
+    
+    // build adjacency lookup
+    const adj = new Set();
+    edges.forEach(e => {
+      adj.add(`${e.from}-${e.to}`);
+      adj.add(`${e.to}-${e.from}`);
+    });
+    
+    // rows
+    nodes.forEach((rowNode, i) => {
+      const rowLabel = document.createElement('div');
+      rowLabel.className = 'matrix-label matrix-label-row';
+      rowLabel.innerHTML = `<a href="${rowNode.root_url}" style="color: var(--accent-secondary); text-decoration: none;">${rowNode.label.substring(0, 15)}</a>`;
+      rowLabel.dataset.row = i;
+      grid.appendChild(rowLabel);
+      
+      nodes.forEach((colNode, j) => {
+        const cell = document.createElement('div');
+        cell.className = 'matrix-cell';
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+        cell.dataset.hasLink = adj.has(`${i}-${j}`) ? 'true' : 'false';
+        
+        cell.addEventListener('mouseenter', () => {
+          document.querySelectorAll(`[data-row="${i}"], [data-col="${j}"]`).forEach(el => el.classList.add('highlight'));
+        });
+        
+        cell.addEventListener('mouseleave', () => {
+          document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        });
+        
+        grid.appendChild(cell);
+      });
+    });
+  });
+</script>

@@ -1,0 +1,35 @@
+<nav class="nav-container">
+  <a href="{{ get_url(path="/") }}">layer:00/ego</a>
+  
+  {% set docs_section = get_section(path="docs/_index.md") %}
+  {% if docs_section.subsections %}
+    {% for subsection_path in docs_section.subsections %}
+      {% set subsection = get_section(path=subsection_path) %}
+      {% if subsection.pages | length > 0 %}
+        <a href="{{ subsection.permalink }}">layer:{% if loop.index0 < 10 %}0{% endif %}{{ loop.index0 }}/{{ subsection.title | lower }}</a>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if section and section.pages %}
+  <div class="nav-local-index">
+    <p>local index</p>
+    {% set use_header_nav = section.extra.headerNavigation | default(value=false) %}
+
+    {% for page in section.pages | sort(attribute="date") | reverse %}
+      {% if use_header_nav %}
+        <a href="{{ section.permalink }}#{{ page.slug }}" class="nav-article">{{ page.title }}</a>
+      {% else %}
+        <a href="{{ page.permalink }}" class="nav-article">{{ page.title }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div>
+    <img src="/images/lowry.png" style="padding-bottom: 10px">
+    <a href="https://lainchan.org/" style="padding: 0">
+      <img src="/images/proxy-image.gif">
+    </a>
+  </div>
+</nav>

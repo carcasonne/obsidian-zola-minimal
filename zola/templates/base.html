@@ -1,32 +1,37 @@
-{%- import 'macros/header.html' as macros_header -%}
-{%- import 'macros/docs-sidebar.html' as macros_sidebar -%}
-{%- import 'macros/docs-graph.html' as macros_docs_graph -%}
-{%- import 'macros/docs-toc.html' as macros_toc -%}
-{%- import 'macros/graph.html' as macros_graph -%}
 <!DOCTYPE html>
-<html lang="{{ config.extra.language_code | default(value="en-US") }}">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-  <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
-  <link rel="stylesheet" href="{{ get_url(path="style.css") | safe }}">
-  {% block head_extra %}{% endblock head_extra %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes/lainchan.css">
+    {% block extra_head %}{% endblock extra_head %}
 </head>
-{% block body %}{% set page_class="home" %}{% endblock body %}
 
-<body class="{{ page_class }}">
-  {% block header %}
-  {{ macros_header::header(current_section="/") }}
-  {% endblock header %}
-
-  {% block content %}{% endblock content %}
-
-  <script src="{{ get_url(path="js/settings.js") | safe }}" defer></script>
-  <script src="{{ get_url(path="js/main.js") | safe }}" defer></script>
-  
-  {% block graph_js %}{% endblock graph_js %}
+<body>
+    <div class="page-wrapper">
+        {% include "components/navigation.html" %}
+        <div class="container">
+            <div class="terminal-header">
+                <div class="terminal-id">
+                    <div class="terminal-status"></div>
+                    <span>{% block terminal_title %}
+                        {% if section %}{{ section.title | upper }}
+                        {% elif page %}{{ page.title | upper }}
+                        {% else %}SYSTEM{% endif %}
+                    {% endblock %}</span>
+                </div>
+            </div>
+            <main class="main">
+                {% block content %}{% endblock content %}
+            </main>
+        </div>
+    </div>
+    
+    <script src="/js/main.js"></script>
+    {% block extra_js %}{% endblock extra_js %}
 </body>
 
 </html>

@@ -379,15 +379,11 @@ class Settings:
             nodes: {
                 shape: "box",
                 color: {
-                    background: "#f2f2f2",
-                    border: "#161616",
-                    highlight: {
-                        background: "#d0d0d0",
-                        border: "#08bdba"
-                    }
+                    background: "rgba(19, 26, 26, 0.3)",
+                    border: "#40a088"
                 },
                 font: {
-                    face: "Inter",
+                    face: "Berkeley Mono, monospace",
                     color: "#ffffff",
                     strokeWidth: 0,
                 },
@@ -402,8 +398,8 @@ class Settings:
             },
             edges: {
                 color: {
-                    color: "#90A4AE",
-                    highlight: "#000000"
+                    color: "#7a8a94",
+                    highlight: "#40a088"
                 },
                 width: 1.5,
                 smooth: {
@@ -468,16 +464,15 @@ class Settings:
 #                                Knowledge Graph                               #
 # ---------------------------------------------------------------------------- #
 
-OXOCARBON_COLORS = [
-    "#FF6F00",  # ox-orange
-    "#ee5396",  # ox-magenta
-    "#08bdba",  # ox-cyan
-    "#ff7eb6",  # ox-pink
-    "#0f62fe",  # ox-blue
-    "#673AB7",  # ox-purple-dark
-    "#42be65",  # ox-green
-    "#be95ff",  # ox-purple
-    "#FFAB91",  # ox-orange-light
+LAINCHAN_COLORS = [
+    "#00aeff",  # accent-primary (cyan/blue)
+    "#40a088",  # accent-secondary (teal)
+    "#bd00ff",  # accent-tertiary (purple)
+    "#c7e6d7",  # text-primary (pale green)
+    "#7a8a94",  # text-muted (gray)
+    "#18635d",  # dimmed secondary
+    "#e8f5f0",  # accent-highlight-text
+    "#a0a0a0",  # text-secondary
 ]
 
 
@@ -500,18 +495,11 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
         edge_counts[i] += 1
         edge_counts[j] += 1
 
-    # Choose the most connected nodes to be colored
-    top_nodes = {
-        node_url: i
-        for i, (node_url, _) in enumerate(
-            list(sorted(edge_counts.items(), key=lambda k: -k[1]))[: len(OXOCARBON_COLORS)]
-        )
-    }
-
     base_url = Settings.options['SITE_URL']
     non_root_start = base_url.find('/')
     non_root_part = base_url[non_root_start:] if non_root_start != -1 else ''
-    # Generate graph data
+    
+    # Generate graph data - assign color to every node
     graph_info = {
         "nodes": [
             {
@@ -519,11 +507,23 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
                 "label"  : title,
                 "url"    : url,
                 "root_url": non_root_part + url,
-                "color"  : OXOCARBON_COLORS[top_nodes[url]] if url in top_nodes else None,
+                "color"  : {
+                    "background": "rgba(19, 26, 26, 0.3)",
+                    "border": LAINCHAN_COLORS[idx % len(LAINCHAN_COLORS)],
+                    "highlight": {
+                        "background": "rgba(24, 99, 93, 0.4)",
+                        "color": "#0b0f12"  # dark bg color for contrast
+                    }
+                },
+                "font": {
+                    "color": "#ffffff",
+                    "highlight": {
+                        "color": "#0b0f12"  # dark bg color for contrast
+                    }
+                },
                 "value"  : math.log10(edge_counts[url] + 1) + 1,
-                "opacity": 0.1,
             }
-            for url, title in nodes.items()
+            for idx, (url, title) in enumerate(nodes.items())
         ],
         "edges": [
             {"from": node_ids[edge[0]], "to": node_ids[edge[1]]}
