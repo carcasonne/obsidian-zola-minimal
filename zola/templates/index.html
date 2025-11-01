@@ -3,6 +3,13 @@
 {% block title %}layer:00/ego{% endblock title %}
 
 {% block content %}
+{% set all_sections = get_section(path="_index.md") %}
+{% set all_pages = [] %}
+{% for section_path in all_sections.subsections %}
+    {% set section = get_section(path=section_path) %}
+    {% set_global all_pages = all_pages | concat(with=section.pages) %}
+{% endfor %}
+
 <div class="terminal-grid">
     <!-- System Status -->
     <div class="panel system-status">
@@ -39,9 +46,6 @@
             <span class="panel-meta">LAST 7D</span>
         </div>
         <div class="panel-content">
-            {% set books = get_section(path="docs/Books/_index.md") %}
-            {% set articles = get_section(path="docs/Articles/_index.md") %}
-            {% set all_pages = articles.pages | concat(with=books.pages) %}
             {% for page in all_pages | sort(attribute="date") | reverse | slice(end=3) %}
             <div class="activity-item">
                 <span class="activity-time">{{ page.date | date(format="%Y.%m.%d") }}</span>
@@ -55,7 +59,7 @@
     <div class="panel nav-matrix">
         <div class="panel-header">
             <span>NAVIGATION.MATRIX</span>
-            <span class="panel-meta">6 NODES</span>
+            <span class="panel-meta">{{ all_sections.subsections | length }} NODES</span>
         </div>
         <div class="panel-content">
         </div>
@@ -69,8 +73,7 @@
         </div>
         <div class="panel-content">
             <div class="content-list">
-                {% set all_content = articles.pages | concat(with=books.pages) %}
-                {% for page in all_content | sort(attribute="date") | reverse | slice(end=8) %}
+                {% for page in all_pages | sort(attribute="date") | reverse | slice(end=8) %}
                 <div class="content-item">
                     <a href="{{ page.permalink }}" class="content-title">{{ page.title }}</a>
                     <span class="content-date">{{ page.date | date(format="%Y.%m.%d") }}</span>
@@ -86,17 +89,16 @@
             <span>METRICS</span>
         </div>
         <div class="panel-content">
-            {% set total_entries = books.pages | length + articles.pages | length %}
             <div class="stat-block">
                 <div class="stat-label">TOTAL ENTRIES</div>
-                <div class="stat-value">{{ total_entries }}</div>
+                <div class="stat-value">{{ all_pages | length }}</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 68%"></div>
                 </div>
             </div>
             
             {% set total_words = 0 %}
-            {% for page in all_content %}
+            {% for page in all_pages %}
                 {% set_global total_words = total_words + page.word_count %}
             {% endfor %}
             <div class="stat-block">
@@ -109,7 +111,7 @@
             
             <div class="stat-block">
                 <div class="stat-label">SECTIONS ACTIVE</div>
-                <div class="stat-value">5</div>
+                <div class="stat-value">{{ all_sections.subsections | length }}</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 82%"></div>
                 </div>
@@ -169,10 +171,10 @@
             </div>
             <div class="status-right">
                 <div class="status-item">
-                    <span>NODES: {{ config.extra.menu | length }}</span>
+                    <span>NODES: {{ all_sections.subsections | length }}</span>
                 </div>
                 <div class="status-item">
-                    <span>ENTRIES: {{ total_entries }}</span>
+                    <span>ENTRIES: {{ all_pages | length }}</span>
                 </div>
             </div>
         </div>

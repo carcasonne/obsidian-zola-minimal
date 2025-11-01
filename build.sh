@@ -46,12 +46,12 @@ rsync -a "$ZOLACFG" build/config.toml
 rsync -a zola/ build
 rsync -a content/ build/content
 
-# Use obsidian-export to export markdown content from obsidian
-mkdir -p build/content/docs build/__docs
+# obsidian-export dumps to temp dir
+mkdir -p build/__vault_export
 if [ -z "$STRICT_LINE_BREAKS" ]; then
-	obsidian-export --frontmatter=never --hard-linebreaks --no-recursive-embeds "$VAULT" build/__docs
+	obsidian-export --frontmatter=never --hard-linebreaks --no-recursive-embeds "$VAULT" build/__vault_export
 else
-	obsidian-export --frontmatter=never --no-recursive-embeds "$VAULT" build/__docs
+	obsidian-export --frontmatter=never --no-recursive-embeds "$VAULT" build/__vault_export
 fi
 
 $PYTHON convert.py

@@ -1,7 +1,7 @@
 <nav class="nav-container">
   <a href="{{ get_url(path="/") }}">layer:00/ego</a>
   
-  {% set docs_section = get_section(path="docs/_index.md") %}
+  {% set docs_section = get_section(path="_index.md") %}
   {% set idx = 0 %}
   {% if docs_section.subsections %}
     {% for subsection_path in docs_section.subsections %}
