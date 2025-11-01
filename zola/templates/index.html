@@ -51,6 +51,16 @@
         </div>
     </div>
 
+    <!-- Navigation Matrix -->
+    <div class="panel nav-matrix">
+        <div class="panel-header">
+            <span>NAVIGATION.MATRIX</span>
+            <span class="panel-meta">6 NODES</span>
+        </div>
+        <div class="panel-content">
+        </div>
+    </div>
+
     <!-- Recent Content -->
     <div class="panel recent-content">
         <div class="panel-header">
@@ -59,13 +69,7 @@
         </div>
         <div class="panel-content">
             <div class="content-list">
-                {% set docs_root = get_section(path="docs/_index.md") %}
-                {% set all_content = [] %}
-                {% for subsection_path in docs_root.subsections %}
-                    {% set subsection = get_section(path=subsection_path) %}
-                    {% set_global all_content = all_content | concat(with=subsection.pages) %}
-                {% endfor %}
-                
+                {% set all_content = articles.pages | concat(with=books.pages) %}
                 {% for page in all_content | sort(attribute="date") | reverse | slice(end=8) %}
                 <div class="content-item">
                     <a href="{{ page.permalink }}" class="content-title">{{ page.title }}</a>
@@ -113,17 +117,6 @@
         </div>
     </div>
 
-    <!-- Connection Matrix -->
-    <div class="panel nav-matrix">
-      <div class="panel-header">
-        <span>LINK.TOPOLOGY</span>
-        <span class="panel-meta">MATRIX VIEW</span>
-      </div>
-      <div class="panel-content" style="padding: 0; height: 100%;">
-        {% include "components/connection-matrix.html" %}
-      </div>
-    </div>
-
     <!-- Console Output -->
     <div class="panel console-output">
         <div class="panel-header">
@@ -141,11 +134,11 @@
             </div>
             <div class="console-line">
                 <span class="console-prompt">></span>
-                <span class="console-text"> "People seldom do what they believe in.</span>
+                <span class="console-text"> »People seldom do what they believe in.</span>
             </div>
             <div class="console-line">
                 <span class="console-prompt">></span>
-                <span class="console-text"> They do what is convenient, then repent."</span>
+                <span class="console-text"> They do what is convenient, then repent.«</span>
             </div>
             <div class="console-line">
                 <span class="console-prompt">></span>
@@ -185,10 +178,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
-<script src="{{ get_url(path="js/graph_info.js") }}"></script>
-<script src="{{ get_url(path="js/graph.js") }}"></script>
 
 <script>
     function updateTime() {

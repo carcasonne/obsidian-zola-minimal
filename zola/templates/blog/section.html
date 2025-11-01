@@ -1,50 +1,31 @@
-{% extends "section.html" %}
+{% extends "base.html" %}
 
-{% block body %}
-  {% set page_class = "docs list" %}
-{% endblock body %}
+{% block title %}{{ section.title }}{% endblock title %}
 
-{% block header %}
-  {# This value is matched by the config.extra.menu.main~section #}
-  {% set current_section = "docs" %}
-  {{ macros_header::header(current_section=current_section)}}
-{% endblock header %}
+{% block extra_head %}
+<link rel="stylesheet" href="/css/article-section.css">
+{% endblock extra_head %}
 
 {% block content %}
-<div class="wrap container" role="document">
-  <div class="content">
-    <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-10 col-xxl-8">
-        <article>
-          <h1 class="text-center">{{ section.title | safe }}</h1>
-          <div class="text-center">{{ section.content | safe }}</div>
-          <p>skibidi toilet</p>
-          <div class="card-list">
-            {% set index_path = current_path ~ "_index.md" | trim_start_matches(pat="/") %}
-            {% set index = get_section(path=index_path) %}
-            {% for page in index.pages %}
-              <div class="card my-3">
-                <div class="card-body">
-                  <a class="stretched-link" href="{{ page.permalink }}">{{ page.title }} &rarr;</a>
-                </div>
-              </div>
-            {% endfor %}
-            {% for s in index.subsections %}
-              {% set subsection = get_section(path=s) %}
-              {% if subsection.pages %}
-                {% for page in subsection.pages %}
-                <div class="card my-3">
-                  <div class="card-body">
-                    <a class="stretched-link" href="{{ page.permalink }}">{{ page.title }} &rarr;</a>
-                  </div>
-                </div>
-                {% endfor %}                                    
-              {% endif %}
-            {% endfor %}
-          </div>
-        </article>
-      </div>
+<div class="content-wrapper">
+    <div class="layer-indicator">{{ section.title }}.log — {{ section.pages | length }} entries</div>
+    
+    {% if section.content %}
+    <div class="prose">
+        {{ section.content | safe }}
     </div>
-  </div>
+    {% endif %}
+
+        {% if section.pages %}
+        <div class="articles-list">
+            {% for page in section.pages | sort(attribute="date") | reverse %}
+            <div class="article-item">
+                <a href="{{ page.permalink }}" class="article-title">{{ page.title }}</a>
+                <span class="article-date">{{ page.date | date(format="%Y.%m.%d") }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock content %}

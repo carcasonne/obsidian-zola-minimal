@@ -4,6 +4,10 @@
 
 {% block terminal_title %}{{ page.title | upper }}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="/css/article-page.css">
+{% endblock extra_head %}
+
 {% block content %}
 <div class="content-wrapper">
     <article class="section">
@@ -19,6 +23,7 @@
         </header>
 
         <div class="multi-column">
+            <p>skibidi toilet</p>
             {{ page.content | safe }}
         </div>
 

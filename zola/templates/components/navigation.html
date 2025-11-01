@@ -2,15 +2,18 @@
   <a href="{{ get_url(path="/") }}">layer:00/ego</a>
   
   {% set docs_section = get_section(path="docs/_index.md") %}
+  {% set idx = 0 %}
   {% if docs_section.subsections %}
     {% for subsection_path in docs_section.subsections %}
       {% set subsection = get_section(path=subsection_path) %}
       {% if subsection.pages | length > 0 %}
-        <a href="{{ subsection.permalink }}">layer:{% if loop.index0 < 10 %}0{% endif %}{{ loop.index0 }}/{{ subsection.title | lower }}</a>
+        <a href="{{ subsection.permalink }}">layer:{% if idx < 10 %}0{% endif %}{{ idx }}/{{ subsection.title | lower }}</a>
+        {% set_global idx = idx + 1 %}
       {% endif %}
     {% endfor %}
   {% endif %}
 
+  <a href="{{ get_url(path="lainring") }}">layer:{% if idx < 10 %}0{% endif %}{{ idx }}/lainring</a>
   {% if section and section.pages %}
   <div class="nav-local-index">
     <p>local index</p>
