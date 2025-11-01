@@ -46,6 +46,21 @@ Credits:
   zola --root=build serve
   ```
 
+## Tmux
+
+Alternatively run the `./tmux.sh` script to launch:
+1. Visual Studio Code in the current directory.
+2. A Zola server hosting session
+3. A session which rebuilds the project when changes happen to files in the `./zola/` directory.
+
+Obviously needs `tmux` installed, but also `entr` for watching changes to files. I have also made this script callable from anywhere by adding it to my path via calling `oz-dev` via symlink: 
+
+```
+
+ln -s <path-to-file> ~/.local/bin/oz-dev
+
+```
+
 # Features
 
 **Supported**
