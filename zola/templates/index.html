@@ -46,9 +46,9 @@
             <span class="panel-meta">LAST 7D</span>
         </div>
         <div class="panel-content">
-            {% for page in all_pages | sort(attribute="date") | reverse | slice(end=3) %}
+            {% for page in all_pages | sort(attribute="updated") | reverse | slice(end=3) %}
             <div class="activity-item">
-                <span class="activity-time">{{ page.date | date(format="%Y.%m.%d") }}</span>
+                <span class="activity-time">{{ page.updated | date(format="%Y.%m.%d") }}</span>
                 <span class="activity-text">{{ page.title }}</span>
             </div>
             {% endfor %}

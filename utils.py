@@ -216,20 +216,20 @@ class DocPath:
         return self.is_file and self.old_path.suffix == ".md"
 
     @property
-    def modified(self) -> datetime:
+    def modified(self) -> str:
+        """gets modification time as iso8601 string"""
         fm = self.frontmatter
         for field in ['modified', 'date modified', 'updated']:
             if field in fm:
-                val = fm[field]
-                if isinstance(val, datetime):
-                    return val
-                # handle both 'YYYY-MM-DDTHH:MM' and 'YYYY-MM-DDTHH:MM:SS'
-                try:
-                    return datetime.fromisoformat(str(val))
-                except ValueError:
-                    # if seconds missing, append them
-                    return datetime.fromisoformat(str(val) + ':00')
-        return datetime.fromtimestamp(os.path.getmtime(self.old_path))
+                val = str(fm[field]).replace(' ', 'T')
+                if len(val) == 16:
+                    val += ':00'
+                if not ('+' in val or val.endswith('Z')):
+                    val += '+00:00'
+                return val
+        # fallback to fs mtime
+        dt = datetime.fromtimestamp(os.path.getmtime(self.old_path))
+        return dt.strftime('%Y-%m-%dT%H:%M:%S+00:00')
 
     @property
     def content(self) -> List[str]:

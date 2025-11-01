@@ -24,12 +24,12 @@ TAG_TO_DIR = {
 # section -> template mapping
 SECTION_TEMPLATES = {
     'books': {
-        'section': 'blog/books-section.html',
-        'page': 'blog/book-review.html',
+        'section': 'blog/section.html',
+        'page': 'blog/page.html',
     },
     'articles': {
-        'section': 'blog/articles-section.html',
-        'page': 'blog/article.html',
+        'section': 'blog/section.html',
+        'page': 'blog/page.html',
     },
 }
 
@@ -140,8 +140,8 @@ def process_page(
         if meta_data.get('graph', True):
             edges.extend([doc_path.edge(rel_path) for rel_path in linked])
     
-    date_created = meta_data.get('created', doc_path.modified)
-    date_modified = meta_data.get('modified', doc_path.modified)
+    date_created = normalize_date(meta_data.get('created', doc_path.modified))
+    date_modified = normalize_date(meta_data.get('modified', doc_path.modified))
 
     frontmatter = [
         "---",
@@ -149,7 +149,10 @@ def process_page(
         f"date: {date_created}",
         f"updated: {date_modified}",
         f"template: {templates['page']}",
-        # ...
+        "extra:",
+        f"    prerender: {links}",
+        "---",
+        "",
     ]
     
     doc_path.write([
@@ -201,6 +204,18 @@ def process_section(doc_path: DocPath, section_count: int):
     doc_path.write_to("_index.md", "\n".join(frontmatter))
     print(f"found section: {doc_path.new_rel_path}")
 
+def normalize_date(date_val):
+    """ensure date has seconds + timezone for zola"""
+    if not date_val:
+        return None
+    date_str = str(date_val).replace(' ', 'T')
+    # add seconds if missing
+    if len(date_str) == 16:  # YYYY-MM-DDTHH:MM
+        date_str += ':00'
+    # add timezone if missing
+    if not ('+' in date_str or date_str.endswith('Z')):
+        date_str += '+00:00'
+    return date_str
 
 if __name__ == "__main__":
     main()

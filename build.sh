@@ -49,9 +49,9 @@ rsync -a content/ build/content
 # obsidian-export dumps to temp dir
 mkdir -p build/__vault_export
 if [ -z "$STRICT_LINE_BREAKS" ]; then
-	obsidian-export --frontmatter=never --hard-linebreaks --no-recursive-embeds "$VAULT" build/__vault_export
+	obsidian-export --hard-linebreaks --no-recursive-embeds "$VAULT" build/__vault_export
 else
-	obsidian-export --frontmatter=never --no-recursive-embeds "$VAULT" build/__vault_export
+	obsidian-export --no-recursive-embeds "$VAULT" build/__vault_export
 fi
 
 $PYTHON convert.py
