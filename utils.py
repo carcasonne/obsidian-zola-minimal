@@ -18,27 +18,23 @@ import yaml
 import metadata_handlers
 
 site_dir = Path(__file__).parent.absolute() / "build"
-raw_dir = site_dir / "__docs"
-docs_dir = site_dir / "content/docs"
-
+raw_dir = site_dir / "__vault_export"
+content_dir = site_dir / "content"
 
 # ---------------------------------------------------------------------------- #
 #                                 General Utils                                #
 # ---------------------------------------------------------------------------- #
 
 def to_prerender_links(links: List[str]) -> str:
-    """Converts links to prerender links"""
+    """converts links to prerender links"""
     x = ''.join([f'<link rel="prerender" href="{link}" as="document"/>\n' for link in links])
     print(x)
     return x
 
-
-# Pretty printer
 pp = PrettyPrinter(indent=4, compact=False).pprint
 
-
 def convert_metadata_to_html(metadata: dict) -> str:
-    """Convert yaml metadata to HTML depending on metadata type"""
+    """convert yaml metadata to HTML depending on metadata type"""
     parsed_metadata = ""
     handlers = get_metadata_handlers()
 
@@ -48,18 +44,12 @@ def convert_metadata_to_html(metadata: dict) -> str:
             parsed_metadata += str(func(metadata[metadata_key])).strip().replace("\n", " ") + "\n"
     return parsed_metadata
 
-
 def get_metadata_handlers():
     return [(name, func) for name, func in getmembers(metadata_handlers, isfunction) if not name.startswith("_")]
 
-
-# print(convert_metadata_to_html({"modified": "2021-07-01 12:00:00", "tags": ["tag1", "tag2"], "button": "button1",
-#                                 "source"  : "https://www.google.com"}))
-
-
 def slugify_path(path: Union[str, Path], no_suffix: bool, lowercase=False) -> Path:
-    """Slugifies every component of a path. Note that '../xxx' will get slugified to '/xxx'. Always use absolute paths. `no_suffix=True` when path is URL or directory (slugify everything including extension)."""
-    path = Path(str(path))  # .lower()
+    """slugifies every component of a path. no_suffix=True when path is URL or directory"""
+    path = Path(str(path))
     if Settings.is_true("SLUGIFY"):
         if no_suffix:
             os_path = "/".join(slugify(item, lowercase=lowercase) for item in path.parts)
@@ -79,19 +69,13 @@ def slugify_path(path: Union[str, Path], no_suffix: bool, lowercase=False) -> Pa
     else:
         return path
 
-
 # ---------------------------------------------------------------------------- #
 #                               Document Classes                               #
 # ---------------------------------------------------------------------------- #
 
-
 @dataclass
 class DocLink:
-    """
-    A class for internal links inside a Markdown document.
-    [xxxx](yyyy<.md?>#zzzz)
-    """
-
+    """internal links inside markdown [xxxx](yyyy<.md?>#zzzz)"""
     combined: str
     title: str
     url: str
@@ -100,21 +84,6 @@ class DocLink:
 
     @classmethod
     def get_links(cls, line: str) -> List["DocLink"]:
-        r"""
-        Factory method.
-        Get non-http links [xxx](<!http>yyy<.md>#zzz).
-
-        \[(.+?)\]: Captures title part (xxx).
-        (?!http)(\S+?): Captures URL part (yyy) and discard URL that starts with http.
-        (\.md)?: Captures ".md" extension (if any) to identify markdown files.
-        (#\S+)?: Captures header part (#zzz).
-
-        Returns:
-            _type_: _description_
-        """
-
-        # Removed starting "[" and ending ")" such that we can identify inner links [...](...)
-
         return [
             cls(f"[{combined})", title, url, md, header)
             for combined, title, url, md, header in re.findall(
@@ -125,93 +94,86 @@ class DocLink:
 
     @property
     def is_md(self) -> bool:
-        """Link is a Markdown link."""
         return self.md != ""
 
     @staticmethod
     def no_inner_link(item: str) -> bool:
-        """Check that capture link does not contain inner links."""
         return re.match(r"\[.*?\]\(\S*?\)", item) is None
 
     def abs_url(self, doc_path: "DocPath") -> str:
-        """Returns an absolute URL based on quoted relative URL from obsidian-export."""
-
+        """returns absolute URL based on quoted relative URL from obsidian-export"""
         if self.url is None or self.url == "":
-            print(f"Empty link found: {doc_path.old_rel_path}")
+            print(f"empty link found: {doc_path.old_rel_path}")
             return "/404"
 
         try:
             new_rel_path = (
                 (doc_path.new_path.parent / unquote(self.url))
                 .resolve()
-                .relative_to(docs_dir)
+                .relative_to(content_dir)
             )
             new_rel_path = quote(str(slugify_path(new_rel_path, False)))
-
-            return f"/docs/{new_rel_path}"
+            return f"/{new_rel_path}"
         except Exception:
-            print(f"Invalid link found: {doc_path.old_rel_path}")
+            print(f"invalid link found: {doc_path.old_rel_path}")
             return "/404"
 
     @classmethod
     def parse(cls, line: str, doc_path: "DocPath") -> Tuple[str, List[str]]:
-        """Parses and fixes all internal links in a line. Also returns linked paths for knowledge graph."""
-
+        """parses and fixes all internal links in a line"""
         parsed = line
         linked: List[str] = []
 
         def decide_internal_link_format(link: "DocLink") -> Tuple[str, str]:
             abs_url = link.abs_url(doc_path)
 
-            # use shortcode for videos
             if any(link.title.endswith(ext) for ext in (".webm", ".mp4")):
                 return abs_url, r"{{ " + f'video(url="{abs_url}", alt="{link.title}")' + r" }}"
             
-            # use markdown image syntax for images
             if any(link.url.lower().endswith(ext) for ext in (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".bmp")):
                 return abs_url, f"![{link.title}]({abs_url})"
 
             return abs_url, r"{{ " + f'abs_url(abs="{abs_url}{link.header}", text="{link.title}")' + r" }}"
 
-
         for link in cls.get_links(line):
             abs_url, replace_with = decide_internal_link_format(link)
-
             parsed = parsed.replace(link.combined, replace_with)
-
             linked.append(abs_url)
 
         return parsed, linked
 
 
 class DocPath:
-    """
-    A class for any path found in the exported Obsidian directory.
-    Can be a section (folder), page (Markdown file) or resource (non-Markdown file).
-    """
-
-    def __init__(self, path: Path):
-        """Path parsing."""
+    """any path found in exported obsidian directory - section/page/resource"""
+    
+    def __init__(self, path: Path, target_section: Optional[str] = None):
+        """path parsing with optional section override"""
         self.old_path = path.resolve()
         self.old_rel_path = self.old_path.relative_to(raw_dir)
         new_rel_path = self.old_rel_path
 
-        # Take care of cases where Markdown file has a sibling directory of the same name
+        # handle sibling folder collision
         if self.is_md and (self.old_path.parent / self.old_path.stem).is_dir():
-            print(f"Name collision with sibling folder, renaming: {self.old_rel_path}")
+            print(f"name collision with sibling folder, renaming: {self.old_rel_path}")
             new_rel_path = self.old_rel_path.parent / (
-                    self.old_rel_path.stem + "-nested" + self.old_rel_path.suffix
+                self.old_rel_path.stem + "-nested" + self.old_rel_path.suffix
             )
 
         self.new_rel_path = slugify_path(new_rel_path, not self.is_file)
-        self.new_path = docs_dir / str(self.new_rel_path)
-        print(f"New path: {self.new_path}")
+        
+        # apply section override if provided
+        if target_section and self.is_file:
+            self.new_path = content_dir / target_section / self.new_rel_path.name
+            self.new_rel_path = Path(target_section) / self.new_rel_path.name
+        else:
+            self.new_path = content_dir / str(self.new_rel_path)
+        
+        print(f"new path: {self.new_path}")
 
     # --------------------------------- Sections --------------------------------- #
 
     @property
     def section_title(self) -> str:
-        """Gets the title of the section."""
         title = str(self.old_rel_path).replace('"', r"\"")
         return (
             title
@@ -221,14 +183,10 @@ class DocPath:
 
     @property
     def section_sidebar(self) -> str:
-        """Gets the title of the section."""
         sidebar = str(self.old_rel_path)
         assert Settings.options["SUBSECTION_SYMBOL"] is not None
         section_symbol = Settings.options["SUBSECTION_SYMBOL"] if sidebar.count("/") > 0 else ""
-        sidebar = (
-                      section_symbol
-                  ) + sidebar.split("/")[-1]
-
+        sidebar = section_symbol + sidebar.split("/")[-1]
         print("sidebar", sidebar)
         return (
             sidebar
@@ -237,7 +195,7 @@ class DocPath:
         )
 
     def write_to(self, child: str, content: Union[str, List[str]]):
-        """Writes content to a child path under new path."""
+        """writes content to a child path under new path"""
         new_path = self.new_path / child
         new_path.parent.mkdir(parents=True, exist_ok=True)
         with open(new_path, "w") as f:
@@ -250,63 +208,53 @@ class DocPath:
 
     @property
     def page_title(self) -> str:
-        """Gets the title of the page."""
-
-        # The replacement might not be necessary, filenames cannot contain double quotes
-        title = " ".join(
-            [
-                #item if item[0].isupper() else item.title()
-                item for item in self.old_path.stem.split(" ")
-            ]
-        ).replace('"', r"\"")
+        title = " ".join([item for item in self.old_path.stem.split(" ")]).replace('"', r"\"")
         return title
 
     @property
     def is_md(self) -> bool:
-        """Whether path points to a Markdown file."""
         return self.is_file and self.old_path.suffix == ".md"
 
     @property
     def modified(self) -> datetime:
-        """Gets last modified time."""
+        fm = self.frontmatter
+        for field in ['modified', 'date modified', 'updated']:
+            if field in fm:
+                val = fm[field]
+                if isinstance(val, datetime):
+                    return val
+                # handle both 'YYYY-MM-DDTHH:MM' and 'YYYY-MM-DDTHH:MM:SS'
+                try:
+                    return datetime.fromisoformat(str(val))
+                except ValueError:
+                    # if seconds missing, append them
+                    return datetime.fromisoformat(str(val) + ':00')
         return datetime.fromtimestamp(os.path.getmtime(self.old_path))
 
     @property
     def content(self) -> List[str]:
-        """Gets the lines of the file but ignores the front matter."""
+        """gets lines of file but ignores frontmatter"""
         with open(self.old_path, "r") as f:
             lines = f.readlines()
             if lines[0].startswith("---"):
-                # find the end of the front matter
                 for i, line in enumerate(lines[1:]):
                     if line.startswith("---"):
                         return lines[i + 2:]
             return lines
-        # return [line for line in open(self.old_path, "r").readlines()]
-
-    # @property
-    # def metadata(self) -> Dict[str, str]:
-    #     """Gets the metadata of the file. Made up of the front matter and some file properties."""
-    #     metadata = self.frontmatter
-    #     metadata["modified"] = self.modified.strftime("%Y-%m-%d %H:%M:%S")
-    #     return self.frontmatter
 
     @property
     def frontmatter(self) -> Dict[str, str]:
-        """Gets the front matter of the file."""
+        """gets frontmatter of file"""
         with open(self.old_path, "r") as f:
             lines = f.readlines()
             if lines[0].startswith("---"):
-                # find the end of the front matter
                 for i, line in enumerate(lines[1:]):
                     if line.startswith("---"):
-                        return yaml.load("".join(lines[1:i + 1]),
-                                         Loader=yaml.FullLoader)  # using yaml lib called pyyaml
+                        return yaml.load("".join(lines[1:i + 1]), Loader=yaml.FullLoader)
             return {}
-        # return [line for line in open(self.old_path, "r").readlines()]
 
     def write(self, content: Union[str, List[str]]):
-        """Writes content to new path."""
+        """writes content to new path"""
         if not isinstance(content, str):
             content = "".join(content)
         self.new_path.parent.mkdir(parents=True, exist_ok=True)
@@ -317,11 +265,10 @@ class DocPath:
 
     @property
     def is_file(self) -> bool:
-        """Whether path points to a file."""
         return self.old_path.is_file()
 
     def copy(self):
-        """Copies file from old path to new path."""
+        """copies file from old path to new path"""
         self.new_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(self.old_path, self.new_path)
 
@@ -329,12 +276,12 @@ class DocPath:
 
     @property
     def abs_url(self) -> str:
-        """Returns an absolute URL to the page."""
+        """returns absolute URL to the page"""
         assert self.is_md
-        return quote(f"/docs/{str(self.new_rel_path)[:-3]}")
+        return quote(f"/{str(self.new_rel_path)[:-3]}")
 
     def edge(self, other: str) -> Tuple[str, str]:
-        """Gets an edge from page's URL to another URL."""
+        """gets edge from page's URL to another URL"""
         return tuple(sorted([self.abs_url, other]))
 
 
@@ -342,39 +289,28 @@ class DocPath:
 #                                   Settings                                   #
 # ---------------------------------------------------------------------------- #
 
-
 class Settings:
-    """
-    Changes to mutable class variable fields are broadcasted across all instances no matter where the change happens.
-    The class object and all instances would receive the change no matter the setting method:
-    - assign to Settings.default["xxx]
-    - change cls.default["xxx"] inside class method
-    - assign to instance.default["xxx"]
-    - change self.default["xxx"] inside instance method
-    """
-
-    # Default options
     options: Dict[str, Optional[str]] = {
-        "SITE_URL"             : None,
-        "SITE_TITLE"           : "Someone's Second 🧠",
-        "TIMEZONE"             : "Asia/Hong_Kong",
-        "REPO_URL"             : None,
-        "LANDING_PAGE"         : None,
-        "LANDING_TITLE"        : "I love obsidian-zola! 💖",
-        "SITE_TITLE_TAB"       : "",
-        "LANDING_DESCRIPTION"  : "I have nothing but intelligence.",
-        "LANDING_BUTTON"       : "Click to steal some👆",
-        "SORT_BY"              : "title",
-        "SLUGIFY"              : "y",
-        "HOME_GRAPH"           : "y",
-        "PAGE_GRAPH"           : "y",
-        "SUBSECTION_SYMBOL"    : "<div class='folder'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M448 96h-172.1L226.7 50.75C214.7 38.74 198.5 32 181.5 32H64C28.65 32 0 60.66 0 96v320c0 35.34 28.65 64 64 64h384c35.35 0 64-28.66 64-64V160C512 124.7 483.3 96 448 96zM64 80h117.5c4.273 0 8.293 1.664 11.31 4.688L256 144h192c8.822 0 16 7.176 16 16v32h-416V96C48 87.18 55.18 80 64 80zM448 432H64c-8.822 0-16-7.176-16-16V240h416V416C464 424.8 456.8 432 448 432z' /></svg></div>",
-        "LOCAL_GRAPH"          : "",
-        "GRAPH_LINK_REPLACE"   : "",
-        "STRICT_LINE_BREAKS"   : "",
-        "SIDEBAR_COLLAPSED"    : "",
-        "ROOT_SECTION_NAME"    : "main",
-        "GRAPH_OPTIONS"        : """
+        "SITE_URL": None,
+        "SITE_TITLE": "Someone's Second 🧠",
+        "TIMEZONE": "Asia/Hong_Kong",
+        "REPO_URL": None,
+        "LANDING_PAGE": None,
+        "LANDING_TITLE": "I love obsidian-zola! 💖",
+        "SITE_TITLE_TAB": "",
+        "LANDING_DESCRIPTION": "I have nothing but intelligence.",
+        "LANDING_BUTTON": "Click to steal some👆",
+        "SORT_BY": "title",
+        "SLUGIFY": "y",
+        "HOME_GRAPH": "y",
+        "PAGE_GRAPH": "y",
+        "SUBSECTION_SYMBOL": "<div class='folder'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M448 96h-172.1L226.7 50.75C214.7 38.74 198.5 32 181.5 32H64C28.65 32 0 60.66 0 96v320c0 35.34 28.65 64 64 64h384c35.35 0 64-28.66 64-64V160C512 124.7 483.3 96 448 96zM64 80h117.5c4.273 0 8.293 1.664 11.31 4.688L256 144h192c8.822 0 16 7.176 16 16v32h-416V96C48 87.18 55.18 80 64 80zM448 432H64c-8.822 0-16-7.176-16-16V240h416V416C464 424.8 456.8 432 448 432z' /></svg></div>",
+        "LOCAL_GRAPH": "",
+        "GRAPH_LINK_REPLACE": "",
+        "STRICT_LINE_BREAKS": "",
+        "SIDEBAR_COLLAPSED": "",
+        "ROOT_SECTION_NAME": "main",
+        "GRAPH_OPTIONS": """
         {
             nodes: {
                 shape: "box",
@@ -421,7 +357,6 @@ class Settings:
 
     @classmethod
     def is_true(cls, key: str) -> bool:
-        """Returns whether an option's string value is true."""
         val = cls.options[key]
         if not val:
             return False
@@ -429,13 +364,8 @@ class Settings:
 
     @classmethod
     def parse_env(cls):
-        """
-        Checks the env variables for required settings. Also stores the set variables.
-        """
-
         for key in cls.options.keys():
             required = cls.options[key] is None
-
             if key in environ:
                 cls.options[key] = environ[key]
             else:
@@ -448,14 +378,12 @@ class Settings:
 
     @classmethod
     def sub_line(cls, line: str) -> str:
-        """Substitutes variable placeholders in a line."""
         for key, val in cls.options.items():
             line = line.replace(f"___{key}___", val if val else "")
         return line
 
     @classmethod
     def sub_file(cls, path: Path):
-        """Substitutes variable placeholders in a file."""
         content = "".join([cls.sub_line(line) for line in open(path, "r").readlines()])
         open(path, "w").write(content)
 
@@ -465,31 +393,15 @@ class Settings:
 # ---------------------------------------------------------------------------- #
 
 LAINCHAN_COLORS = [
-    "#00aeff",  # accent-primary (cyan/blue)
-    "#40a088",  # accent-secondary (teal)
-    "#bd00ff",  # accent-tertiary (purple)
-    "#c7e6d7",  # text-primary (pale green)
-    "#7a8a94",  # text-muted (gray)
-    "#18635d",  # dimmed secondary
-    "#e8f5f0",  # accent-highlight-text
-    "#a0a0a0",  # text-secondary
+    "#00aeff", "#40a088", "#bd00ff", "#c7e6d7",
+    "#7a8a94", "#18635d", "#e8f5f0", "#a0a0a0",
 ]
 
-
 def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
-    """
-    Constructs a knowledge graph from given nodes and edges.
-    """
-
-    # Assign increasing ID value to each node
     node_ids = {k: i for i, k in enumerate(nodes.keys())}
-
-    # Filter out edges that does not connect two known nodes (i.e. ghost pages)
     existing_edges = [
         edge for edge in set(edges) if edge[0] in node_ids and edge[1] in node_ids
     ]
-
-    # Count the number of edges connected to each node
     edge_counts = {k: 0 for k in nodes.keys()}
     for i, j in existing_edges:
         edge_counts[i] += 1
@@ -499,29 +411,26 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
     non_root_start = base_url.find('/')
     non_root_part = base_url[non_root_start:] if non_root_start != -1 else ''
     
-    # Generate graph data - assign color to every node
     graph_info = {
         "nodes": [
             {
-                "id"     : node_ids[url],
-                "label"  : title,
-                "url"    : url,
+                "id": node_ids[url],
+                "label": title,
+                "url": url,
                 "root_url": non_root_part + url,
-                "color"  : {
+                "color": {
                     "background": "rgba(19, 26, 26, 0.3)",
                     "border": LAINCHAN_COLORS[idx % len(LAINCHAN_COLORS)],
                     "highlight": {
                         "background": "rgba(24, 99, 93, 0.4)",
-                        "color": "#0b0f12"  # dark bg color for contrast
+                        "color": "#0b0f12"
                     }
                 },
                 "font": {
                     "color": "#ffffff",
-                    "highlight": {
-                        "color": "#0b0f12"  # dark bg color for contrast
-                    }
+                    "highlight": {"color": "#0b0f12"}
                 },
-                "value"  : math.log10(edge_counts[url] + 1) + 1,
+                "value": math.log10(edge_counts[url] + 1) + 1,
             }
             for idx, (url, title) in enumerate(nodes.items())
         ],
@@ -536,31 +445,13 @@ def parse_graph(nodes: Dict[str, str], edges: List[Tuple[str, str]]):
     with open(site_dir / "static/js/graph_info.js", "w") as f:
         is_local = "true" if Settings.is_true("LOCAL_GRAPH") else "false"
         link_replace = "true" if Settings.is_true("GRAPH_LINK_REPLACE") else "false"
-        f.write(
-            "\n".join(
-                [
-                    f"var graph_data={graph_info}",
-                    f"var graph_is_local={is_local}",
-                    f"var graph_link_replace={link_replace}",
-                ]
-            )
-        )
+        f.write("\n".join([
+            f"var graph_data={graph_info}",
+            f"var graph_is_local={is_local}",
+            f"var graph_link_replace={link_replace}",
+        ]))
 
-
-# ---------------------------------------------------------------------------- #
-#                         Write Settings to Javascript                         #
-# ---------------------------------------------------------------------------- #
 def write_settings():
-    """
-    Writes settings to Javascript file.
-    """
-
     with open(site_dir / "static/js/settings.js", "w") as f:
         sidebar_collapsed = "true" if Settings.is_true("SIDEBAR_COLLAPSED") else "false"
-        f.write(
-            "\n".join(
-                [
-                    f"var sidebar_collapsed={sidebar_collapsed}",
-                ]
-            )
-        )
+        f.write(f"var sidebar_collapsed={sidebar_collapsed}")
