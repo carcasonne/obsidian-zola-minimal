@@ -66,7 +66,6 @@ def main():
 
     nodes: Dict[str, str] = {}
     edges: List[Tuple[str, str]] = []
-    section_count = 0
     seen_sections = set()
 
     all_paths = list(sorted(raw_dir.glob("**/*")))
@@ -80,12 +79,6 @@ def main():
             else:
                 doc_path.copy()
                 print(f"found resource: {doc_path.new_rel_path}")
-        else:
-            # skip root dir, we want custom index template
-            if path == raw_dir:
-                continue
-            process_section(doc_path, section_count)
-            section_count += 1
 
     pp(nodes)
     pp(edges)
@@ -109,25 +102,28 @@ def process_page(
 
     meta_data = doc_path.frontmatter
     tags = meta_data.get('tags', [])
-    
     target_section = get_target_section(tags)
+
+    if not target_section:
+        print(f"skipping {doc_path.page_title} (no tag match)")
+        return
+
     templates = get_templates(target_section)
-    
-    if target_section:
-        from pathlib import Path
-        doc_path.new_path = content_dir / target_section / doc_path.new_path.name
-        doc_path.new_rel_path = Path(target_section) / doc_path.new_path.name
-        
-        if target_section not in seen_sections:
-            create_tag_section(target_section, templates['section'])
-            seen_sections.add(target_section)
-    
+
+    from pathlib import Path
+    doc_path.new_path = content_dir / target_section / doc_path.new_path.name
+    doc_path.new_rel_path = Path(target_section) / doc_path.new_path.name
+
+    if target_section not in seen_sections:
+        create_tag_section(target_section, templates['section'])
+        seen_sections.add(target_section)
+
     if meta_data.get('graph', True):
         nodes[doc_path.abs_url] = doc_path.page_title
-    
+
     print(f"found metadata for {doc_path.abs_url}: {meta_data}")
     print(f"  -> routing to: {doc_path.new_rel_path}")
-    
+
     parsed_lines: List[str] = []
     links = []
     
@@ -185,24 +181,6 @@ def create_tag_section(section_name: str, template: str):
         f.write("\n".join(frontmatter))
     
     print(f"created tag section: {section_name}")
-
-
-def process_section(doc_path: DocPath, section_count: int):
-    """process section directory"""
-    frontmatter = [
-        "---",
-        f'title: "{doc_path.section_title}"',
-        "template: blog/section.html",
-        f"sort_by: {Settings.options['SORT_BY']}",
-        f"weight: {section_count}",
-        "extra:",
-        f"    sidebar: {doc_path.section_sidebar}",
-        "---",
-        "",
-    ]
-    
-    doc_path.write_to("_index.md", "\n".join(frontmatter))
-    print(f"found section: {doc_path.new_rel_path}")
 
 def normalize_date(date_val):
     """ensure date has seconds + timezone for zola"""
