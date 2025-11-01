@@ -140,16 +140,16 @@ def process_page(
         if meta_data.get('graph', True):
             edges.extend([doc_path.edge(rel_path) for rel_path in linked])
     
+    date_created = meta_data.get('created', doc_path.modified)
+    date_modified = meta_data.get('modified', doc_path.modified)
+
     frontmatter = [
         "---",
         f'title: "{doc_path.page_title}"',
-        f"date: {doc_path.modified}",
-        f"updated: {doc_path.modified}",
+        f"date: {date_created}",
+        f"updated: {date_modified}",
         f"template: {templates['page']}",
-        "extra:",
-        f"    prerender: {links}",
-        "---",
-        "",
+        # ...
     ]
     
     doc_path.write([
