@@ -11,6 +11,9 @@ Includes my own custom theme (well, it is going to be my theme over time. To sta
 This fork is a fork of `SherAndrei`'s fork. My changes, currently, are:
 - Added embedded image support (no longer just a link to the ressource).
 - Added python venv support by default, so you don't have to install packages to your system python.
+- Removed single-directory structure (the `example.com/docs/...` structure).
+- Added tag-based directory structure.  Creates sections based on the Obsidian tags on files.
+  * Note: Obsidian files should have `created` and `modified` metadata in its frontmatter. But this is easy to change if you don't want it.
 
 Credits:
 * This repo was forked from [obsidian-zola-plus](https://github.com/SherAndrei/obsidian-zola-minimal).
