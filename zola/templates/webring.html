@@ -7,11 +7,13 @@
 {% endblock extra_head %}
 
 {% block content %}
+{% set sites = load_data(path="content/lainring/lainring.json") %}
+
 <div class="content-wrapper">
     <section class="section">
         <div class="section-header">
             <h1>{{ section.title }}</h1>
-            <div class="layer-indicator">{{ section.title }}.nodes — {{ section.extra.sites | length }} connected</div>
+            <div class="layer-indicator">{{ section.title }}.nodes — {{ sites | length }} connected</div>
         </div>
 
         {% if section.content %}
@@ -21,7 +23,7 @@
         {% endif %}
 
         <div class="webring-grid">
-            {% for site in section.extra.sites %}
+            {% for site in sites %}
             <div class="node-entry" {% if site.url %} data-url="{{ site.url }}" {% endif %}>
                 <img src="/images/banner/{{ site.img }}" 
                      alt="Banner for {{ site.title }}"
@@ -46,7 +48,7 @@
 
         <div class="webring-footer">
             <button class="action-btn" onclick="randomNode()">random_node()</button>
-            <div class="peer-count">{{ section.extra.sites | length }} peers</div>
+            <div class="peer-count">{{ sites | length }} peers</div>
         </div>
     </section>
 </div>

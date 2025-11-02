@@ -1,0 +1,47 @@
+.article-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.article-link:hover {
+  color: var(--accent-primary);
+}
+
+/* fix table without headers */
+.styled-table tbody tr:first-child td {
+  border-top: 1px solid var(--border-color);
+}
+
+.articles-list {
+  margin: 2rem 0;
+}
+
+.article-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.article-item:hover {
+  background: var(--accent-highlight);
+}
+
+.article-title {
+  color: var(--text-primary);
+  text-decoration: none;
+  flex: 1;
+}
+
+.article-title:hover {
+  color: var(--accent-primary);
+}
+
+.article-date {
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
