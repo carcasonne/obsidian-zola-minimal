@@ -10,201 +10,184 @@
     {% set_global all_pages = all_pages | concat(with=section.pages) %}
 {% endfor %}
 
-<div class="terminal-grid">
-    <!-- System Status -->
-    <div class="panel system-status">
-        <div class="panel-header">
-            <span>SYSTEM.STATUS</span>
-            <!-- <span class="panel-meta" id="current-time"></span> -->
-        </div>
-        <div class="panel-content">
-            <div class="status-grid">
-                <div class="metric">
-                    <span class="metric-label">UPTIME</span>
-                    <span class="metric-value" id="uptime">0D 00H</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">LOCATION</span>
-                    <span class="metric-value">CPH/DK</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">PROTOCOL</span>
-                    <span class="metric-value">HTTP/2</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">STATUS</span>
-                    <span class="metric-value">ACTIVE</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<style>
+    .irc-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 4rem);
+}
 
-    <!-- Activity Feed -->
-    <div class="panel activity-feed">
-        <div class="panel-header">
-            <span>RECENT.ACTIVITY</span>
-            <span class="panel-meta">LAST 7D</span>
+.irc-header {
+  font-family: 'courier new', monospace;
+  font-size: 0.75rem;
+  color: var(--wired-green);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.irc-messages {
+  font-family: 'courier new', monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.system-message,
+.activity-message,
+.channel-info,
+.input-line {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+  align-items: baseline;
+}
+
+.timestamp {
+  color: var(--text-muted);
+  min-width: 50px;
+  font-size: 0.75rem;
+}
+
+.user {
+  color: var(--wired-green);
+  min-width: 80px;
+}
+
+.user.prompt {
+  color: var(--accent-primary);
+}
+
+.text {
+  color: var(--text-primary);
+}
+
+.action {
+  color: var(--accent-tertiary);
+}
+
+.page-link,
+.channel-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  position: relative;
+}
+
+.page-link:hover,
+.channel-link:hover {
+  color: var(--accent-primary);
+  text-shadow: 0 0 4px var(--accent-primary);
+}
+
+.meta,
+.channel-meta {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.divider {
+  color: var(--border-color);
+  margin: 0.75rem 0;
+  font-size: 0.75rem;
+}
+
+.input-line {
+  margin-top: 1.5rem;
+}
+
+.cursor {
+  color: var(--wired-green);
+  animation: cursor-blink 1.5s infinite;
+}
+
+@media (max-width: 768px) {
+  .irc-container {
+    padding: 1rem;
+  }
+  
+  .irc-messages {
+    font-size: 0.75rem;
+  }
+  
+  .timestamp {
+    display: none;
+  }
+}
+</style>
+
+<div class="irc-container">
+    <pre class="irc-header">
+═══════════════════════════════════════════════════════════════════════════════
+  WELCOME TO #EGO ON WIRED.NET
+  {{ all_pages | length }} users online | topic: personal archive | {{ now() | date(format="%Y.%m.%d") }}
+═══════════════════════════════════════════════════════════════════════════════
+    </pre>
+
+    <div class="irc-messages">
+        <div class="system-message">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user">&lt;system&gt;</span>
+            <span class="text">connection established. welcome back.</span>
         </div>
-        <div class="panel-content">
-            {% for page in all_pages | sort(attribute="updated") | reverse | slice(end=3) %}
-            <div class="activity-item">
-                <span class="activity-time">{{ page.updated | date(format="%Y.%m.%d") }}</span>
-                <span class="activity-text">{{ page.title }}</span>
-            </div>
+        
+        <div class="system-message">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user">&lt;system&gt;</span>
+            <span class="text">recent activity:</span>
+        </div>
+        
+        <div class="divider">─────────────────────────────────────────────────────────────</div>
+        
+        {% for page in all_pages | sort(attribute="updated") | reverse | slice(end=8) %}
+        <div class="activity-message">
+            <span class="timestamp">[{{ page.updated | date(format="%H:%M") }}]</span>
+            <span class="action">*</span>
+            <a href="{{ page.permalink }}" class="page-link">{{ page.title | lower }}</a>
+            <span class="meta">posted</span>
+        </div>
+        {% endfor %}
+        
+        <div class="divider">─────────────────────────────────────────────────────────────</div>
+        
+        <div class="system-message">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user">&lt;system&gt;</span>
+            <span class="text">available channels:</span>
+        </div>
+        
+        {% for section_path in all_sections.subsections %}
+            {% set section = get_section(path=section_path) %}
+            {% set word_count = 0 %}
+            {% for page in section.pages %}
+                {% set_global word_count = word_count + page.word_count %}
             {% endfor %}
+            <div class="channel-info">
+                <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+                <span class="user">&lt;system&gt;</span>
+                <a href="{{ section.permalink }}" class="channel-link">#{{ section.title | lower }}</a>
+                <span class="channel-meta">[{{ section.pages | length }} messages, {{ word_count / 1000 | round(precision=1) }}k words]</span>
+            </div>
+        {% endfor %}
+        
+        <div class="divider">─────────────────────────────────────────────────────────────</div>
+        
+        <div class="system-message">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user">&lt;system&gt;</span>
+            <span class="text">type /join &lt;channel&gt; to browse</span>
         </div>
-    </div>
-
-    <!-- Navigation Matrix -->
-    <div class="panel nav-matrix">
-        <div class="panel-header">
-            <span>NAVIGATION.MATRIX</span>
-            <span class="panel-meta">{{ all_sections.subsections | length }} NODES</span>
+        
+        <div class="system-message">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user">&lt;system&gt;</span>
+            <span class="text">type /read &lt;message&gt; to view</span>
         </div>
-        <div class="panel-content">
-        </div>
-    </div>
-
-    <!-- Recent Content -->
-    <div class="panel recent-content">
-        <div class="panel-header">
-            <span>RECENT.ENTRIES</span>
-            <span class="panel-meta">ALL SOURCES</span>
-        </div>
-        <div class="panel-content">
-            <div class="content-list">
-                {% for page in all_pages | sort(attribute="date") | reverse | slice(end=8) %}
-                <div class="content-item">
-                    <a href="{{ page.permalink }}" class="content-title">{{ page.title }}</a>
-                    <span class="content-date">{{ page.date | date(format="%Y.%m.%d") }}</span>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats Panel -->
-    <div class="panel stats-panel">
-        <div class="panel-header">
-            <span>METRICS</span>
-        </div>
-        <div class="panel-content">
-            <div class="stat-block">
-                <div class="stat-label">TOTAL ENTRIES</div>
-                <div class="stat-value">{{ all_pages | length }}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 68%"></div>
-                </div>
-            </div>
-            
-            {% set total_words = 0 %}
-            {% for page in all_pages %}
-                {% set_global total_words = total_words + page.word_count %}
-            {% endfor %}
-            <div class="stat-block">
-                <div class="stat-label">WORDS WRITTEN</div>
-                <div class="stat-value">{{ total_words / 1000 | round(method="ceil", precision=1) }}K</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 45%"></div>
-                </div>
-            </div>
-            
-            <div class="stat-block">
-                <div class="stat-label">SECTIONS ACTIVE</div>
-                <div class="stat-value">{{ all_sections.subsections | length }}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 82%"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Console Output -->
-    <div class="panel console-output">
-        <div class="panel-header">
-            <span>CONSOLE.OUTPUT</span>
-            <span class="panel-meta">SYSTEM LOG</span>
-        </div>
-        <div class="panel-content">
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> Welcome to layer:00/ego</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> Navigation matrix loaded successfully</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> »People seldom do what they believe in.</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> They do what is convenient, then repent.«</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> Links rot and algorithms decide what survives.</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">></span>
-                <span class="console-text"> Take what you like, discard the rest, drift on.</span>
-            </div>
-            <div class="console-line">
-                <span class="console-prompt">$</span>
-                <span class="console-text cursor-blink">█</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Status Bar -->
-    <div class="panel status-bar">
-        <div class="panel-content">
-            <div class="status-left">
-                <div class="status-item">
-                    <div class="status-indicator"></div>
-                    <span>SYSTEM ONLINE</span>
-                </div>
-                <div class="status-item">
-                    <span id="timestamp"></span>
-                </div>
-            </div>
-            <div class="status-right">
-                <div class="status-item">
-                    <span>NODES: {{ all_sections.subsections | length }}</span>
-                </div>
-                <div class="status-item">
-                    <span>ENTRIES: {{ all_pages | length }}</span>
-                </div>
-            </div>
+        
+        <div class="input-line">
+            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
+            <span class="user prompt">&lt;you&gt;</span>
+            <span class="cursor">█</span>
         </div>
     </div>
 </div>
-
-<script>
-    function updateTime() {
-        const now = new Date();
-        const timeStr = now.toISOString().slice(0, 19).replace('T', ' ');
-        const el = document.getElementById('timestamp');
-        if (el) el.textContent = timeStr;
-        
-        const currentEl = document.getElementById('current-time');
-        if (currentEl) currentEl.textContent = now.toISOString().slice(11, 19);
-    }
-    
-    function updateUptime() {
-        const start = new Date('2025-01-01');
-        const now = new Date();
-        const diff = now - start;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const el = document.getElementById('uptime');
-        if (el) el.textContent = `${days}D ${hours.toString().padStart(2, '0')}H`;
-    }
-    
-    updateTime();
-    updateUptime();
-    setInterval(updateTime, 1000);
-    setInterval(updateUptime, 60000);
-</script>
 {% endblock content %}
