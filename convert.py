@@ -1,4 +1,5 @@
 import re
+import metadata_handlers
 from typing import Dict, List, Optional, Tuple
 
 from utils import (
@@ -25,7 +26,7 @@ TAG_TO_DIR = {
 SECTION_TEMPLATES = {
     'books': {
         'section': 'blog/section.html',
-        'page': 'blog/page.html',
+        'page': 'book/page.html',
     },
     'articles': {
         'section': 'blog/section.html',
@@ -138,6 +139,7 @@ def process_page(
     
     date_created = normalize_date(meta_data.get('created', doc_path.modified))
     date_modified = normalize_date(meta_data.get('modified', doc_path.modified))
+    extras = metadata_handlers.get_frontmatter_extras(meta_data)
 
     frontmatter = [
         "---",
@@ -147,9 +149,14 @@ def process_page(
         f"template: {templates['page']}",
         "extra:",
         f"    prerender: {links}",
-        "---",
-        "",
     ]
+    for key, value in extras.items():
+        if isinstance(value, list):
+            frontmatter.append(f'    {key}: {value}')
+        else:
+            frontmatter.append(f'    {key}: "{value}"')
+
+    frontmatter.extend(["---", ""])
     
     doc_path.write([
         "\n".join(frontmatter),

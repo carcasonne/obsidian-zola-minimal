@@ -1,42 +1,28 @@
 """
-Metadata handlers: each function converts a metadata key into HTML for insertion in a page.
-Now simplified — generates <meta> tags instead of badges.
+Metadata handlers: dump everything except tags into frontmatter extra.
+tags handled separately bc routing logic, everything else just goes through.
 """
 
-def modified(date: str) -> str:
-    """Converts date into <meta> tag."""
-    return f'<meta property="article:modified_time" content="{date}"/>'
+SKIP_FIELDS = {'tags', 'created', 'modified', 'title'}  # handled elsewhere
 
-def button(text: str) -> str:
-    return f'<button class="button">{text}</button>'
+def get_frontmatter_extras(metadata: dict) -> dict:
+    """just pass through everything that's not special-cased"""
+    return {
+        key.replace('-', '_'): str(value).strip() # zola can't handle dashes in vars, only underscores 
+        for key, value in metadata.items() 
+        if key not in SKIP_FIELDS
+    }
 
-def chips(chips_dict: dict) -> str:
-    """Convert key-value dict into <meta name="key" content="value"/> entries."""
-    return '\n'.join([_meta_tag(key, value) for key, value in chips_dict.items()])
-
-def consumed(value: str) -> str:
-    return _meta_tag("consumed", value)
-
-def rating(value: str) -> str:
-    return _meta_tag("rating", value)
-
-def source(value):
-    """Convert a URL or list of URLs to meta tags."""
-    if isinstance(value, list):
-        return '\n'.join([source(v) for v in value])
-    return _meta_tag("source", value)
-
-def aliases(list_of_aliases: list) -> str:
-    return '\n'.join([_meta_tag("alias", alias) for alias in list_of_aliases])
-
-def tags(tags_list: list) -> str:
-    """Emit <meta name='tag' content='value'/> for each tag."""
-    return '\n'.join([_meta_tag("tag", tag) for tag in tags_list])
-
-# --- helpers ---
-
-def _meta_tag(name: str, value: str) -> str:
-    """Return an escaped <meta> tag."""
-    name = str(name).strip()
-    value = str(value).strip()
-    return f'<meta name="{name}" content="{value}"/>'
+def get_meta_tags(metadata: dict) -> str:
+    """maybe keep some as meta tags for seo? idk you decide"""
+    output = []
+    
+    # only these stay as meta tags
+    if 'modified' in metadata:
+        output.append(f'<meta property="article:modified_time" content="{metadata["modified"]}"/>')
+    
+    if 'tags' in metadata:
+        for tag in metadata['tags']:
+            output.append(f'<meta name="tag" content="{tag}"/>')
+    
+    return '\n'.join(output)

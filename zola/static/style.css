@@ -455,35 +455,24 @@ a:hover {
 }
 
 .webring-footer {
+  margin-top: 2rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border-color);
+  font-family: 'courier new', monospace;
+  font-size: var(--small-font-size);
+  color: var(--text-muted);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 2rem;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
 }
 
 .action-btn {
   background: none;
-  border: 1px solid var(--wired-green);
+  border: none;
   color: var(--wired-green);
-  padding: 0.5rem 1rem;
-  font-family: var(--font-main);
-  font-size: 0.8rem;
+  font-family: inherit;
+  font-size: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-
-.peer-count {
-  font-family: var(--font-main);
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {

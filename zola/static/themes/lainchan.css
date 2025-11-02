@@ -56,6 +56,7 @@
     --font-main: 'font';
     --font-header: 'font-secondary';
     --font-size: 14px;
+    --small-font-size: 12px;
 
     /* Layout */
     --width-sidebar: 240px;

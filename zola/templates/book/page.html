@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }}{% endblock title %}
+
+{% block terminal_title %}{{ page.title | upper }}{% endblock %}
+
+{% block content %}
+
+<style>
+.book-metadata {
+    font-size: var(--small-font-size);
+}
+
+.book-metadata dt {
+  display: inline-block;
+  width: 12ch;
+  color: var(--wired-green);
+  text-transform: uppercase;
+}
+
+.book-metadata dd {
+  display: inline;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.book-metadata dd::after {
+  content: '\A';
+  white-space: pre;
+}
+
+.reading-timeline {
+  display: flex;
+  gap: 2rem;
+  font-family: 'courier new', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-content {
+  column-count: 1;
+  column-gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .book-content {
+    column-count: 2;
+    column-rule: 1px solid var(--border-color);
+  }
+}
+
+.book-content blockquote {
+  border-left: 2px solid var(--wired-green);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  background: rgba(64, 160, 136, 0.05);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.article-footer {
+  margin-top: 3rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  font-family: 'courier new', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+</style>
+
+<div class="content-wrapper">
+    <article class="book-review">
+        <div class="book-metadata">
+            <dl>
+                <dt>AUTHOR</dt>
+                <dd>{{ page.extra.author }}</dd>
+                
+                <dt>FORMAT</dt>
+                <dd>{{ page.extra.format }}</dd>
+                
+                <dt>RATING</dt>
+                <dd>{{ page.extra.rating }}</dd>
+                
+                <dt>LANGUAGE</dt>
+                <dd>{{ page.extra.language }} ← {{ page.extra.original_language }}</dd>
+                
+                <dt>RECORD</dt>
+                <dd>
+                {% if page.extra.read %}R:{{ page.extra.read | date(format="%Y.%m.%d") }}{% endif %}
+                {% if page.extra.read and page.updated != page.date %} {% endif %}
+                {% if page.updated != page.date %}U:{{ page.updated | date(format="%Y.%m.%d") }}{% endif %}
+                </dd>
+            </dl>
+        </div>
+
+        <div class="book-content">
+            {{ page.content | safe }}
+        </div>
+
+        <footer class="article-footer">
+  --- END OF FILE ---
+</footer>
+    </article>
+</div>
+{% endblock %}
