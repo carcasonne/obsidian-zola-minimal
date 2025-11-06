@@ -10,184 +10,298 @@
     {% set_global all_pages = all_pages | concat(with=section.pages) %}
 {% endfor %}
 
+<div class="manifest">
+    <pre class="manifest-header">
+┌─────────────────────────────────────────────────────────────────┐
+│ LAYER:00/EGO                                    SYSTEM MANIFEST │
+│ COPENHAGEN/DK                                   STATUS: ACTIVE  │
+└─────────────────────────────────────────────────────────────────┘
+    </pre>
+
+    <div class="manifest-body">
+        {% set total_words = 0 %}
+        {% for page in all_pages %}
+            {% set_global total_words = total_words + page.word_count %}
+        {% endfor %}
+
+        <section class="manifest-section">
+            <div class="section-header">SYSTEM METRICS</div>
+            <table class="spec-table">
+                <tr>
+                    <td class="spec-label">TOTAL ENTRIES</td>
+                    <td class="spec-dots">.................................</td>
+                    <td class="spec-value">{{ all_pages | length }}</td>
+                </tr>
+                <tr>
+                    <td class="spec-label">WORDS ARCHIVED</td>
+                    <td class="spec-dots">.................................</td>
+                    <td class="spec-value">{{ total_words | round(method="floor") }}</td>
+                </tr>
+                <tr>
+                    <td class="spec-label">ACTIVE SECTIONS</td>
+                    <td class="spec-dots">.................................</td>
+                    <td class="spec-value">{{ all_sections.subsections | length }}</td>
+                </tr>
+                <tr>
+                    <td class="spec-label">PROTOCOL</td>
+                    <td class="spec-dots">.................................</td>
+                    <td class="spec-value">HTTP/2</td>
+                </tr>
+            </table>
+        </section>
+
+        {% for section_path in all_sections.subsections %}
+            {% set section = get_section(path=section_path) %}
+            {% if section.pages | length > 0 %}
+            <section class="manifest-section">
+                <div class="section-header aligned-header">
+                    <span class="header-left">{{ loop.index }}. <a href="{{ section.permalink }}">{{ section.title | upper }}</a></span>
+                    <span class="header-dots">...............................................</span>
+                    <span class="header-right">[{{ section.pages | length }} ENTRIES]</span>
+                </div>
+                <div class="section-tree">
+                    {% set latest = section.pages | sort(attribute="updated") | reverse | first %}
+                    {% if latest %}
+                    <div class="tree-item">
+                        <span class="tree-branch">└─ latest:</span> <a href="{{ latest.permalink }}">{{ latest.title }}</a>
+                    </div>
+                    <div class="tree-item tree-indent">
+                        <span class="tree-label">U:</span>{{ latest.updated | date(format="%Y-%m-%d %H:%M:%S") }}
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+        {% endfor %}
+
+        <section class="manifest-section">
+            <div class="section-header">RECENT MODIFICATIONS</div>
+            <table class="entry-table">
+                {% for page in all_pages | sort(attribute="updated") | reverse | slice(end=5) %}
+                <tr>
+                    <td class="entry-date">D{{ page.updated | date(format="%Y-%m-%d") }}</td>
+                    <td class="entry-time">T{{ page.updated | date(format="%H:%M:%S") }}</td>
+                    <td class="entry-title"><a href="{{ page.permalink }}">{{ page.title }}</a></td>
+                    <td class="entry-words">{{ page.word_count }}w</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+
+        <section class="manifest-footer">
+            <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│     »People seldom do what they believe in. They do what is     │
+│                   convenient, then repent.«                     │
+│                                                                 │
+│          Links rot and algorithms decide what survives.         │
+│       Take what you like, discard the rest, and drift on.       │
+└─────────────────────────────────────────────────────────────────┘
+            </pre>
+        </section>
+    </div>
+</div>
+
 <style>
-    .irc-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: calc(100vh - 4rem);
+.manifest {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
-.irc-header {
-  font-family: 'courier new', monospace;
-  font-size: 0.75rem;
-  color: var(--wired-green);
-  line-height: 1.4;
-  margin-bottom: 1.5rem;
-  text-align: center;
+.manifest-header {
+    font-family: var(--font-main);
+    font-size: var(--small-font-size);
+    text-align: center;
+    line-height: 1.4;
+    color: var(--accent-secondary);
+    margin-bottom: 2rem;
 }
 
-.irc-messages {
-  font-family: 'courier new', monospace;
-  font-size: 0.85rem;
-  line-height: 1.8;
+.manifest-body {
+    font-family: var(--font-main);
 }
 
-.system-message,
-.activity-message,
-.channel-info,
-.input-line {
-  display: flex;
-  gap: 0.5rem;
-  margin: 0.25rem 0;
-  align-items: baseline;
+.manifest-section {
+    max-width: var(--content-width);
+    margin-bottom: 2.5rem;
 }
 
-.timestamp {
-  color: var(--text-muted);
-  min-width: 50px;
-  font-size: 0.75rem;
+.section-header {
+    font-size: var(--small-font-size);
+    color: var(--accent-secondary);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
 }
 
-.user {
-  color: var(--wired-green);
-  min-width: 80px;
+.section-header a {
+    color: var(--accent-secondary);
+    text-decoration: none;
 }
 
-.user.prompt {
-  color: var(--accent-primary);
+.section-header a:hover {
+    color: var(--accent-primary);
 }
 
-.text {
-  color: var(--text-primary);
+.spec-table {
+    width: 100%;
+    font-size: var(--small-font-size);
+    border-collapse: collapse;
 }
 
-.action {
-  color: var(--accent-tertiary);
+.spec-table td {
+    padding: 0.25rem 0;
 }
 
-.page-link,
-.channel-link {
-  color: var(--text-primary);
-  text-decoration: none;
-  position: relative;
+.spec-label {
+    color: var(--text-muted);
+    white-space: nowrap;
+    width: 40%;
 }
 
-.page-link:hover,
-.channel-link:hover {
-  color: var(--accent-primary);
-  text-shadow: 0 0 4px var(--accent-primary);
+.spec-dots {
+    color: var(--border-color);
+    overflow: hidden;
+    width: 20%;
 }
 
-.meta,
-.channel-meta {
-  color: var(--text-muted);
-  font-size: 0.8rem;
+.spec-value {
+    color: var(--text-primary);
+    text-align: right;
+    white-space: nowrap;
+    width: 40%;
 }
 
-.divider {
-  color: var(--border-color);
-  margin: 0.75rem 0;
-  font-size: 0.75rem;
+.section-tree {
+    margin-left: 1rem;
+    font-size: var(--small-font-size);
+    line-height: 1.6;
 }
 
-.input-line {
-  margin-top: 1.5rem;
+.tree-item {
+    color: var(--text-primary);
 }
 
-.cursor {
-  color: var(--wired-green);
-  animation: cursor-blink 1.5s infinite;
+.tree-branch {
+    color: var(--border-color);
+}
+
+.tree-label {
+    color: var(--text-muted);
+}
+
+.tree-indent {
+    margin-left: 1.5rem;
+}
+
+.tree-item a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.tree-item a:hover {
+    color: var(--accent-primary);
+}
+
+.entry-table {
+    width: 100%;
+    font-size: var(--small-font-size);
+    border-collapse: collapse;
+}
+
+.entry-table tr {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.entry-table tr:hover {
+    background: var(--accent-highlight);
+}
+
+.entry-table td {
+    padding: 0.4rem 0.5rem;
+}
+
+.entry-date {
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.entry-time {
+    color: var(--text-muted);
+    opacity: 0.6;
+    white-space: nowrap;
+    font-size: var(--small-font-size);
+}
+
+.entry-title {
+    width: 100%;
+}
+
+.entry-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.entry-title a:hover {
+    color: var(--accent-primary);
+}
+
+.entry-words {
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+    font-size: var(--small-font-size);
+}
+
+.manifest-footer {
+    margin-top: 3rem;
+    text-align: center;
+    font-size: var(--small-font-size);
+    color: var(--text-muted);
 }
 
 @media (max-width: 768px) {
-  .irc-container {
-    padding: 1rem;
-  }
-  
-  .irc-messages {
-    font-size: 0.75rem;
-  }
-  
-  .timestamp {
-    display: none;
-  }
+    .manifest {
+        padding: 1rem 0.5rem;
+    }
+    
+    .manifest-header,
+    .manifest-footer pre {
+        font-size: var(--small-font-size);
+    }
+    
+    .spec-table,
+    .entry-table {
+        font-size: var(--small-font-size);
+    }
+    
+    .entry-time,
+    .entry-words {
+        display: none;
+    }
+}
+
+.aligned-header {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 0.5ch;
+}
+
+.header-left {
+    flex-shrink: 0;
+}
+
+.header-dots {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--accent-secondary);
+}
+
+.header-right {
+    flex-shrink: 0;
+    padding-left: var(--small);
+    color: var(--accent-secondary);
 }
 </style>
-
-<div class="irc-container">
-    <pre class="irc-header">
-═══════════════════════════════════════════════════════════════════════════════
-  WELCOME TO #EGO ON WIRED.NET
-  {{ all_pages | length }} users online | topic: personal archive | {{ now() | date(format="%Y.%m.%d") }}
-═══════════════════════════════════════════════════════════════════════════════
-    </pre>
-
-    <div class="irc-messages">
-        <div class="system-message">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user">&lt;system&gt;</span>
-            <span class="text">connection established. welcome back.</span>
-        </div>
-        
-        <div class="system-message">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user">&lt;system&gt;</span>
-            <span class="text">recent activity:</span>
-        </div>
-        
-        <div class="divider">─────────────────────────────────────────────────────────────</div>
-        
-        {% for page in all_pages | sort(attribute="updated") | reverse | slice(end=8) %}
-        <div class="activity-message">
-            <span class="timestamp">[{{ page.updated | date(format="%H:%M") }}]</span>
-            <span class="action">*</span>
-            <a href="{{ page.permalink }}" class="page-link">{{ page.title | lower }}</a>
-            <span class="meta">posted</span>
-        </div>
-        {% endfor %}
-        
-        <div class="divider">─────────────────────────────────────────────────────────────</div>
-        
-        <div class="system-message">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user">&lt;system&gt;</span>
-            <span class="text">available channels:</span>
-        </div>
-        
-        {% for section_path in all_sections.subsections %}
-            {% set section = get_section(path=section_path) %}
-            {% set word_count = 0 %}
-            {% for page in section.pages %}
-                {% set_global word_count = word_count + page.word_count %}
-            {% endfor %}
-            <div class="channel-info">
-                <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-                <span class="user">&lt;system&gt;</span>
-                <a href="{{ section.permalink }}" class="channel-link">#{{ section.title | lower }}</a>
-                <span class="channel-meta">[{{ section.pages | length }} messages, {{ word_count / 1000 | round(precision=1) }}k words]</span>
-            </div>
-        {% endfor %}
-        
-        <div class="divider">─────────────────────────────────────────────────────────────</div>
-        
-        <div class="system-message">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user">&lt;system&gt;</span>
-            <span class="text">type /join &lt;channel&gt; to browse</span>
-        </div>
-        
-        <div class="system-message">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user">&lt;system&gt;</span>
-            <span class="text">type /read &lt;message&gt; to view</span>
-        </div>
-        
-        <div class="input-line">
-            <span class="timestamp">[{{ now() | date(format="%H:%M") }}]</span>
-            <span class="user prompt">&lt;you&gt;</span>
-            <span class="cursor">█</span>
-        </div>
-    </div>
-</div>
 {% endblock content %}
