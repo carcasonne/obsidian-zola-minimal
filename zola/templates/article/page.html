@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }}{% endblock title %}
+
+{% block terminal_title %}{{ page.title | upper }}{% endblock %}
+
+{% block content %}
+
+<style>
+.article-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.article-metadata {
+    font-size: var(--small-font-size);
+    margin-bottom: var(--medium);
+}
+
+.article-metadata dt {
+  display: inline-block;
+  width: 12ch;
+  color: var(--wired-green);
+  text-transform: uppercase;
+}
+
+.article-metadata dd {
+  display: inline;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.article-metadata dd::after {
+  content: '\A';
+  white-space: pre;
+}
+
+.article-content {
+  text-align: justify;
+  hyphens: auto;
+}
+
+.article-content p {
+  margin-bottom: var(--small);
+}
+
+.article-content blockquote {
+  border-left: 2px solid var(--wired-green);
+  padding-left: var(--small);
+  margin: var(--medium) 0;
+  font-style: italic;
+  background: rgba(64, 160, 136, 0.05);
+  text-align: left;
+}
+
+.article-content code {
+  background: var(--bg-secondary);
+  padding: 0.2rem 0.4rem;
+  font-family: var(--font-main);
+  color: var(--wired-green);
+  border: 1px solid var(--border-color);
+  font-size: 0.85rem;
+}
+
+.article-content pre {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--small);
+  overflow-x: auto;
+  margin: var(--medium) 0;
+  text-align: left;
+}
+
+.article-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.article-content ul,
+.article-content ol {
+  text-align: left;
+  padding-left: 2rem;
+}
+
+.article-footer {
+  margin-top: calc(var(--medium) * 1.5);
+  padding-top: var(--small);
+  border-top: 1px solid var(--border-color);
+  font-family: var(--font-main);
+  font-size: var(--small-font-size);
+  color: var(--text-muted);
+  text-align: center;
+}
+</style>
+
+<div class="content-wrapper">
+    <article class="article-wrapper">
+        <div class="article-metadata">
+            <dl>
+                <dt>PUBLISHED</dt>
+                <dd>{{ page.date | date(format="%Y.%m.%d") }}</dd>
+                
+                {% if page.updated != page.date %}
+                <dt>MODIFIED</dt>
+                <dd>{{ page.updated | date(format="%Y.%m.%d") }}</dd>
+                {% endif %}
+                
+                <dt>WORDS</dt>
+                <dd>{{ page.word_count }}</dd>
+            </dl>
+        </div>
+
+        <div class="article-content">
+            {{ page.content | safe }}
+        </div>
+
+        <footer class="article-footer">
+  --- END OF FILE ---
+</footer>
+    </article>
+</div>
+{% endblock %}

@@ -15,11 +15,12 @@ from utils import (
     write_settings,
 )
 
-# tag -> output directory mapping
+# tag -> section mapping
 TAG_TO_DIR = {
-    'book': 'books',
-    'article': 'articles',
-    'philosophy': 'philosophy',
+    "book": "books",
+    "article": "articles",
+    "philosophy": "philosophy",
+    "event": "events",
 }
 
 # section -> template mapping
@@ -30,8 +31,12 @@ SECTION_TEMPLATES = {
     },
     'articles': {
         'section': 'blog/section.html',
-        'page': 'blog/page.html',
+        'page': 'article/page.html',
     },
+    "events": {
+        "section": "event/section.html",
+        "page": "event/page.html",
+    }
 }
 
 DEFAULT_TEMPLATES = {

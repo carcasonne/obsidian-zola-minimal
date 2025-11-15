@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block terminal_title %}PERPETUAL CALENDAR{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="event-calendar">
+        <div class="calendar-header">
+            <h1>PERPETUAL CALENDAR</h1>
+        </div>
+
+        {# Collect unique dates first #}
+        {% set_global unique_dates = [] %}
+        {% for page in section.pages %}
+            {% set month = page.extra.month | default(value="00") %}
+            {% set day = page.extra.day | default(value="00") %}
+            {% set date_key = month ~ "/" ~ day %}
+            
+            {% if date_key not in unique_dates %}
+                {% set_global unique_dates = unique_dates | concat(with=[date_key]) %}
+            {% endif %}
+        {% endfor %}
+
+        {# Sort the unique dates #}
+        {% set sorted_dates = unique_dates | sort %}
+
+        {# Now display each date group #}
+        {% for date in sorted_dates %}
+            {# Count entries for this date #}
+            {% set_global entry_count = 0 %}
+            {% for page in section.pages %}
+                {% set page_month = page.extra.month | default(value="00") %}
+                {% set page_day = page.extra.day | default(value="00") %}
+                {% set page_date = page_month ~ "/" ~ page_day %}
+                
+                {% if page_date == date %}
+                    {% set_global entry_count = entry_count + 1 %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="date-group">
+                <div class="date-header">
+                    <span class="date-arrow">--&gt;</span>
+                    <span class="date-value">{{ date }}</span>
+                    <span class="date-dots">{% for i in range(end=50) %}.{% endfor %}</span>
+                    <span class="date-count">[{{ entry_count }} {% if entry_count == 1 %}ENTRY{% else %}ENTRIES{% endif %}]</span>
+                </div>
+
+                <div class="date-entries">
+                    {# Display all entries for this date #}
+                    {% for page in section.pages %}
+                        {% set page_month = page.extra.month | default(value="00") %}
+                        {% set page_day = page.extra.day | default(value="00") %}
+                        {% set page_date = page_month ~ "/" ~ page_day %}
+                        {% set page_year = page.extra.year | default(value="∞") %}
+                        {% if page_year == "None" %}{% set page_year = "∞" %}{% endif %}
+                        
+                        {% if page_date == date %}
+                            <div class="event-entry">
+                                <div class="event-tree">└─</div>
+                                <div class="event-details">
+                                    <a href="{{ page.permalink }}" class="event-link">
+                                        <span class="event-year">{{ page_year }}:</span>
+                                        <span class="event-title">{{ page.extra.name }}</span>
+                                    </a>
+                                    <div class="event-meta">
+                                        <span class="event-category">[{{ page.extra.category | default(value="Uncategorized") }}]</span>
+                                    </div>
+                                    <div class="event-timestamps">
+                                        <span class="timestamp-created">C:{{ page.date | date(format="%Y-%m-%d %H:%M:%S") }}</span>
+                                        <span class="timestamp-modified">U:{{ page.updated | date(format="%Y-%m-%d %H:%M:%S") }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        {% if section.pages | length == 0 %}
+        <div class="empty-state">
+            <p>No events recorded yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.event-calendar {
+    font-family: var(--font-main);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.calendar-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.calendar-header h1 {
+    font-size: 1.5rem;
+    color: var(--accent-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.calendar-meta {
+    font-size: var(--small-font-size);
+    color: var(--text-muted);
+}
+
+.date-group {
+    margin-bottom: 2rem;
+}
+
+.date-header {
+    display: flex;
+    align-items: center;
+    font-size: var(--small-font-size);
+    color: var(--accent-secondary);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-main);
+}
+
+.date-arrow {
+    margin-right: 0.5rem;
+}
+
+.date-value {
+    margin-right: 0.5rem;
+    white-space: nowrap;
+}
+
+.date-dots {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--border-color);
+    letter-spacing: 0.1em;
+}
+
+.date-count {
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.date-entries {
+    margin-left: 1rem;
+}
+
+.event-entry {
+    display: flex;
+}
+
+.event-entry:last-child {
+    border-bottom: none;
+}
+
+.event-tree {
+    color: var(--border-color);
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-link {
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.event-year {
+    color: var(--accent-secondary);
+    font-weight: 600;
+}
+
+.event-title {
+    color: var(--text-primary);
+}
+
+.event-link:hover .event-title {
+    color: var(--accent-primary);
+}
+
+.event-meta {
+    font-size: var(--small-font-size);
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.event-category {
+    color: var(--text-muted);
+}
+
+.event-timestamps {
+    font-size: var(--small-font-size);
+    color: var(--text-muted);
+    display: flex;
+    gap: 1rem;
+}
+
+.timestamp-created::before {
+    content: "";
+    margin-right: 0.25rem;
+}
+
+.timestamp-modified::before {
+    content: "";
+    margin-right: 0.25rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .date-dots {
+        display: none;
+    }
+    
+    .event-timestamps {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+</style>
+{% endblock content %}

@@ -55,7 +55,7 @@
             {% if section.pages | length > 0 %}
             <section class="manifest-section">
                 <div class="section-header aligned-header">
-                    <span class="header-left">{{ loop.index }}. <a href="{{ section.permalink }}">{{ section.title | upper }}</a></span>
+                    <span class="header-left"> --> <a href="{{ section.permalink }}">{{ section.title | upper }}</a></span>
                     <span class="header-dots">...............................................</span>
                     <span class="header-right">[{{ section.pages | length }} ENTRIES]</span>
                 </div>
@@ -104,7 +104,7 @@
 
 <style>
 .manifest {
-    max-width: 900px;
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 2rem 1rem;
 }
