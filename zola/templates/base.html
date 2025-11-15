@@ -14,15 +14,26 @@
     <div class="page-wrapper">
         {% include "components/navigation.html" %}
         <div class="container">
-            <div class="terminal-header">
-                <div class="terminal-id">
-                    <div class="terminal-status"></div>
-                    <span>{% block terminal_title %}
-                        {% if section %}{{ section.title | upper }}
-                        {% elif page %}{{ page.title | upper }}
-                        {% else %}SYSTEM{% endif %}
-                    {% endblock %}</span>
-                </div>
+            <div class="id-bar">
+                {% if page %}
+                {% set current_section = page.components | first %}
+                {% set docs_section = get_section(path="_index.md") %}
+                {% set layer_num = 0 %}
+                
+                {% for subsection_path in docs_section.subsections %}
+                    {% set subsection = get_section(path=subsection_path) %}
+                    {% if current_section in subsection_path %}
+                    {% set_global layer_num = loop.index %}
+                    {% break %}
+                    {% endif %}
+                {% endfor %}
+                
+                layer:00/ego → layer:{% if layer_num < 10 %}0{% endif %}{{ layer_num }}/{{ current_section }} → {{ page.title | lower }}
+                {% elif section and section.title != "Home" %}
+                layer:00/ego → {{ section.title | lower }}
+                {% else %}
+                layer:00/ego
+                {% endif %}
             </div>
             <main class="main">
                 {% block content %}{% endblock content %}

@@ -7,117 +7,101 @@
 {% block content %}
 
 <style>
-.article-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.article-metadata {
-    font-size: var(--small-font-size);
-    margin-bottom: var(--medium);
-}
-
-.article-metadata dt {
-  display: inline-block;
-  width: 12ch;
-  color: var(--wired-green);
-  text-transform: uppercase;
-}
-
-.article-metadata dd {
-  display: inline;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.article-metadata dd::after {
-  content: '\A';
-  white-space: pre;
-}
-
-.article-content {
-  text-align: justify;
-  hyphens: auto;
-}
-
-.article-content p {
-  margin-bottom: var(--small);
-}
-
-.article-content blockquote {
-  border-left: 2px solid var(--wired-green);
-  padding-left: var(--small);
-  margin: var(--medium) 0;
-  font-style: italic;
-  background: rgba(64, 160, 136, 0.05);
-  text-align: left;
-}
-
-.article-content code {
-  background: var(--bg-secondary);
-  padding: 0.2rem 0.4rem;
-  font-family: var(--font-main);
-  color: var(--wired-green);
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
-}
-
-.article-content pre {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  padding: var(--small);
-  overflow-x: auto;
-  margin: var(--medium) 0;
-  text-align: left;
-}
-
-.article-content pre code {
-  background: none;
+.scroll-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-primary);
   border: none;
-  padding: 0;
+  color: var(--border-color);
+  padding: 0.5rem;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  cursor: pointer;
+  pointer-events: auto;
+  line-height: 1;
 }
 
-.article-content ul,
-.article-content ol {
-  text-align: left;
-  padding-left: 2rem;
+.scroll-arrow span {
+  display: block;
 }
 
-.article-footer {
-  margin-top: calc(var(--medium) * 1.5);
-  padding-top: var(--small);
-  border-top: 1px solid var(--border-color);
+.scroll-container.visible {
+  opacity: 1;
+}
+
+.scroll-arrow {
+  background: var(--bg-primary);
+  border: none;
+  color: var(--border-color);
+  padding: 0.25rem 0.5rem;
   font-family: var(--font-main);
   font-size: var(--small-font-size);
-  color: var(--text-muted);
-  text-align: center;
+  cursor: pointer;
+  pointer-events: auto;
+  line-height: 1;
+  white-space: pre;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.scroll-arrow:hover {
+  color: var(--accent-secondary);
 }
 </style>
 
 <div class="content-wrapper">
-    <article class="article-wrapper">
-        <div class="article-metadata">
-            <dl>
-                <dt>PUBLISHED</dt>
-                <dd>{{ page.date | date(format="%Y.%m.%d") }}</dd>
-                
-                {% if page.updated != page.date %}
-                <dt>MODIFIED</dt>
-                <dd>{{ page.updated | date(format="%Y.%m.%d") }}</dd>
-                {% endif %}
-                
-                <dt>WORDS</dt>
-                <dd>{{ page.word_count }}</dd>
-            </dl>
-        </div>
+  <article>
+    <div class="metadata">
+      <dl>
+        <dt>TITLE</dt>
+        <dd>{{ page.title }}</dd>
+        
+        <dt>PUBLISHED</dt>
+        <dd>{{ page.date | date(format="%Y.%m.%d") }}</dd>
+        
+        {% if page.updated != page.date %}
+        <dt>MODIFIED</dt>
+        <dd>{{ page.updated | date(format="%Y.%m.%d") }}</dd>
+        {% endif %}
+        
+        <dt>WORDS</dt>
+        <dd>{{ page.word_count }}</dd>
+      </dl>
+    </div>
 
-        <div class="article-content">
-            {{ page.content | safe }}
-        </div>
+    <div class="column-content">
+      {{ page.content | safe }}
+    </div>
 
-        <footer class="article-footer">
-  --- END OF FILE ---
-</footer>
-    </article>
+    <div class="scroll-container">
+      <button id="scroll-top" class="scroll-arrow" aria-label="Back to top">
+        <span class="arrow-top">↑</span>
+        <span class="arrow-line">|</span>
+        <span class="arrow-line">|</span>
+      </button>
+    </div>
+
+    <footer class="content-footer">
+      --- END OF FILE ---
+    </footer>
+  </article>
 </div>
-{% endblock %}
+
+<script>
+const scrollBtn = document.getElementById('scroll-top');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 400) {
+    scrollBtn.classList.add('visible');
+  } else {
+    scrollBtn.classList.remove('visible');
+  }
+});
+
+scrollBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+{% endblock content %}

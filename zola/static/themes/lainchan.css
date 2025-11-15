@@ -56,12 +56,16 @@
     --font-main: 'font';
     --font-header: 'font-secondary';
     --font-size: 14px;
+    --italic-font-size: 13px;
     --small-font-size: 12px;
+    --tiny-font-size: 10px;
 
     /* Layout */
     --width-sidebar: 240px;
+    --large: 3rem;
     --medium: 2rem;
     --small: 1rem;
+    --tiny: 0.5rem;
     --terminal-header-height: 36px;
     --content-width: 1200px;
 }
