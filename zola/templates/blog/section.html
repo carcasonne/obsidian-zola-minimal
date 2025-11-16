@@ -1,31 +1,94 @@
 {% extends "base.html" %}
 
-{% block title %}{{ section.title }}{% endblock title %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="/css/article-section.css">
-{% endblock extra_head %}
-
 {% block content %}
 <div class="content-wrapper">
-    <div class="layer-indicator">{{ section.title }}.log — {{ section.pages | length }} entries</div>
-    
+    {% set total_words = 0 %}
+    {% for page in section.pages %}
+        {% set_global total_words = total_words + page.word_count %}
+    {% endfor %}
+
+    <div class="metadata">
+        <dl>
+            <dt>SECTION</dt>
+            <dd>{{ section.title }}</dd>
+            
+            <dt>ENTRIES</dt>
+            <dd>{{ section.pages | length }}</dd>
+            
+            <dt>TOTAL</dt>
+            <dd>{{ total_words }}w</dd>
+            
+            <dt>LATEST</dt>
+            <dd>D{{ section.pages | sort(attribute="updated") | last | get(key="updated") | date(format="%Y-%m-%d") }}</dd>
+        </dl>
+    </div>
+
     {% if section.content %}
-    <div class="prose">
+    <div class="archive-description">
         {{ section.content | safe }}
     </div>
     {% endif %}
 
-        {% if section.pages %}
-        <div class="articles-list">
-            {% for page in section.pages | sort(attribute="date") | reverse %}
-            <div class="article-item">
-                <a href="{{ page.permalink }}" class="article-title">{{ page.title }}</a>
-                <span class="article-date">{{ page.date | date(format="%Y.%m.%d") }}</span>
-            </div>
-            {% endfor %}
+    <div class="archive-log">
+        {% for page in section.pages | sort(attribute="date") | reverse %}
+        <div class="log-entry">
+            <span class="log-ts">[{{ page.date | date(format="D%Y-%m-%d T%H:%M:%S") }}]</span>
+            <a href="{{ page.permalink }}" class="log-title">{{ page.title }}</a>
+            <span class="log-wc">&lt;{{ page.word_count }}w&gt;</span>
         </div>
-        {% endif %}
-    </section>
+        {% endfor %}
+    </div>
 </div>
+
+<style>
+.archive-description {
+    margin-bottom: var(--medium);
+    color: var(--text-muted);
+    font-size: var(--small-font-size);
+}
+
+.archive-log {
+    margin-top: var(--large);
+    font-family: var(--font-main);
+    font-size: var(--small-font-size);
+}
+
+.log-entry {
+    display: flex;
+    gap: var(--small);
+    padding: var(--tiny) 0;
+}
+
+.log-entry:hover {
+    background: var(--accent-highlight);
+}
+
+.log-ts {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.log-wc {
+    color: var(--accent-secondary);
+    margin-left: auto;
+}
+
+.log-title {
+    color: var(--text-primary);
+    text-decoration: none;
+    flex: 1;
+}
+
+.log-title:hover {
+    color: var(--accent-primary);
+}
+
+@media (max-width: 768px) {
+    .log-entry {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+</style>
+
 {% endblock content %}

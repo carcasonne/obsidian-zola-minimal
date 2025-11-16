@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}{{ page.title }}{% endblock title %}
-
-{% block terminal_title %}{{ page.title | upper }}{% endblock %}
-
 {% block content %}
 
 <style>
@@ -59,6 +55,11 @@
         
         <dt>PUBLISHED</dt>
         <dd>{{ page.date | date(format="%Y.%m.%d") }}</dd>
+
+        {% if page.extra.theme %}
+        <dt>THEME</dt>
+        <dd>{{ page.extra.theme }}</dd>
+        {% endif %}
         
         {% if page.updated != page.date %}
         <dt>MODIFIED</dt>

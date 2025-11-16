@@ -2,7 +2,7 @@
 
 env.sh
 config.toml
-content/lainring/*
+content/webring/*
 zola/static/images/banner/*
 deploy.sh
 

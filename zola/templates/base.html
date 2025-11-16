@@ -1,10 +1,49 @@
+{% set docs_section = get_section(path="_index.md") %}
+{% set layer_num = 0 %}
+{% set current_section = "" %}
+
+{% if page %}
+    {% set current_section = page.components | first %}
+    {% for subsection_path in docs_section.subsections %}
+        {% if current_section in subsection_path %}
+            {% set_global layer_num = loop.index %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+{% elif section and section.title != "Home" %}
+    {% set current_section = section.components | first %}
+    {% for subsection_path in docs_section.subsections %}
+        {% set subsection = get_section(path=subsection_path) %}
+        {% if subsection.permalink == section.permalink %}
+            {% set_global layer_num = loop.index %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if layer_num < 10 %}
+    {% set layer_display = "0" ~ layer_num %}
+{% else %}
+    {% set layer_display = layer_num %}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+    <title>
+        {% block title %}
+        {% if page %}
+        {{ config.title | lower }}/{{ page.title | lower | slugify }}
+        {% elif section and section.title != "home" %}
+        {{ config.title | lower }}/layer:{{ layer_display }}/{{ section.title | lower }}
+        {% else %}
+        {{ config.title | lower }}/layer:00/ego
+        {% endif %}
+        {% endblock title %}
+    </title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/themes/lainchan.css">
     {% block extra_head %}{% endblock extra_head %}
@@ -16,21 +55,9 @@
         <div class="container">
             <div class="id-bar">
                 {% if page %}
-                {% set current_section = page.components | first %}
-                {% set docs_section = get_section(path="_index.md") %}
-                {% set layer_num = 0 %}
-                
-                {% for subsection_path in docs_section.subsections %}
-                    {% set subsection = get_section(path=subsection_path) %}
-                    {% if current_section in subsection_path %}
-                    {% set_global layer_num = loop.index %}
-                    {% break %}
-                    {% endif %}
-                {% endfor %}
-                
-                layer:00/ego → layer:{% if layer_num < 10 %}0{% endif %}{{ layer_num }}/{{ current_section }} → {{ page.title | lower }}
+                layer:00/ego → layer:{{ layer_display }}/{{ current_section }} → {{ page.title | lower }}
                 {% elif section and section.title != "Home" %}
-                layer:00/ego → {{ section.title | lower }}
+                layer:00/ego → layer:{{ layer_display }}/{{ section.title | lower }}
                 {% else %}
                 layer:00/ego
                 {% endif %}

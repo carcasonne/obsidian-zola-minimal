@@ -1,50 +1,29 @@
-{# Default section.html template #}
-
 {% extends "base.html" %}
 
-{% block seo %}
-  {{ super() }}
-
-  {% set title_addition = "" %}
-  {% set title = "" %}
-  {% if section.title and config.extra.title_addition %}
-    {% set title_addition = section.title ~ title_separator ~ config.extra.title_addition %}
-  {% elif page.title %}
-    {% set title_addition = section.title %}
-  {% else %}
-    {% set title_addition = config.title %}
-  {% endif %}
-  
-  {% if section.description %}
-    {% set description = section.description %}
-  {% else %}
-    {% set description = config.description %}
-  {% endif %}
-  
-  {{ macros_head::seo(title=title_addition, title_addition=title_addition, description=description) }}
-{% endblock seo %}
-
-{% block body %}
-  {% if section.extra.class %}
-    {% set page_class = section.extra.class %}
-  {% else %}
-    {% set page_class = "page list" %}
-  {% endif %}
-{% endblock body %}
+{% block extra_head %}
+<link rel="stylesheet" href="/css/article-section.css">
+{% endblock extra_head %}
 
 {% block content %}
-<div class="wrap container" role="document">
-  <div class="content">
-    <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-10 col-xxl-8">
-        <article>
-          <div class="page-header">
-            <h1>{{ section.title }}</h1>
-          </div>
-          {{ section.content | safe }}
-        </article>
-      </div>
+<div class="content-wrapper">
+    <div class="layer-indicator">{{ section.title }}.log — {{ section.pages | length }} entries</div>
+    
+    {% if section.content %}
+    <div class="prose">
+        {{ section.content | safe }}
     </div>
-  </div>
+    {% endif %}
+
+        {% if section.pages %}
+        <div class="articles-list">
+            {% for page in section.pages | sort(attribute="date") | reverse %}
+            <div class="article-item">
+                <a href="{{ page.permalink }}" class="article-title">{{ page.title }}</a>
+                <span class="article-date">{{ page.date | date(format="%Y.%m.%d") }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock content %}
