@@ -53,21 +53,22 @@
         <dt>TITLE</dt>
         <dd>{{ page.title }}</dd>
         
-        <dt>PUBLISHED</dt>
-        <dd>{{ page.date | date(format="%Y.%m.%d") }}</dd>
-
         {% if page.extra.theme %}
         <dt>THEME</dt>
         <dd>{{ page.extra.theme }}</dd>
         {% endif %}
-        
-        {% if page.updated != page.date %}
-        <dt>MODIFIED</dt>
-        <dd>{{ page.updated | date(format="%Y.%m.%d") }}</dd>
-        {% endif %}
-        
+
         <dt>WORDS</dt>
         <dd>{{ page.word_count }}</dd>
+
+        <dt>PUBLISHED</dt>
+        <dd>D{{ page.date | date(format="%Y-%m-%d") }}</dd>
+
+        {% if page.updated != page.date %}
+        <dt>MODIFIED</dt>
+        <dd>D{{ page.updated | date(format="%Y-%m-%d") }}</dd>
+        {% endif %}
+        
       </dl>
     </div>
 

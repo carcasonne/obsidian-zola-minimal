@@ -4,21 +4,38 @@
 
 {% if page %}
     {% set current_section = page.components | first %}
-    {% for subsection_path in docs_section.subsections %}
-        {% if current_section in subsection_path %}
-            {% set_global layer_num = loop.index %}
-            {% break %}
-        {% endif %}
-    {% endfor %}
-{% elif section and section.title != "Home" %}
-    {% set current_section = section.components | first %}
+    {% set counter = 0 %}
     {% for subsection_path in docs_section.subsections %}
         {% set subsection = get_section(path=subsection_path) %}
-        {% if subsection.permalink == section.permalink %}
-            {% set_global layer_num = loop.index %}
-            {% break %}
+        {% if subsection.pages | length > 0 %}
+            {% set_global counter = counter + 1 %}
+            {% if current_section in subsection_path %}
+                {% set_global layer_num = counter %}
+                {% break %}
+            {% endif %}
         {% endif %}
     {% endfor %}
+    {# webring special case #}
+    {% if current_section == "webring" %}
+        {% set_global layer_num = counter + 1 %}
+    {% endif %}
+{% elif section and section.title != "Home" %}
+    {% set current_section = section.components | first %}
+    {% set counter = 0 %}
+    {% for subsection_path in docs_section.subsections %}
+        {% set subsection = get_section(path=subsection_path) %}
+        {% if subsection.pages | length > 0 %}
+            {% set_global counter = counter + 1 %}
+            {% if subsection.permalink == section.permalink %}
+                {% set_global layer_num = counter %}
+                {% break %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {# webring special case #}
+    {% if section.components | first == "webring" %}
+        {% set_global layer_num = counter + 1 %}
+    {% endif %}
 {% endif %}
 
 {% if layer_num < 10 %}
@@ -33,6 +50,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <title>
         {% block title %}
         {% if page %}
@@ -56,7 +74,7 @@
             <div class="id-bar">
                 {% if page %}
                 layer:00/ego → layer:{{ layer_display }}/{{ current_section }} → {{ page.title | lower }}
-                {% elif section and section.title != "Home" %}
+                {% elif section and section.title != "home" %}
                 layer:00/ego → layer:{{ layer_display }}/{{ section.title | lower }}
                 {% else %}
                 layer:00/ego

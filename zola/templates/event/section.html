@@ -3,8 +3,20 @@
 {% block content %}
 <div class="content-wrapper">
     <div class="event-calendar">
-        <div class="calendar-header">
-            <h1>PERPETUAL CALENDAR</h1>
+        <div class="metadata">
+            <dl>
+                <dt>Section</dt>
+                <dd>{{ section.title }}</dd>
+                
+                <dt>ENTRIES</dt>
+                <dd>{{ section.pages | length }}</dd>
+                
+                <dt>SPAN</dt>
+                <dd>Perpetual</dd>
+                
+                <dt>FORMAT</dt>
+                <dd>MM/DD Chronological</dd>
+            </dl>
         </div>
 
         {# Collect unique dates first #}
@@ -40,7 +52,7 @@
                 <div class="date-header">
                     <span class="date-arrow">--&gt;</span>
                     <span class="date-value">{{ date }}</span>
-                    <span class="date-dots">{% for i in range(end=50) %}.{% endfor %}</span>
+                    <span class="date-dots">{% for i in range(end=140) %}.{% endfor %}</span>
                     <span class="date-count">[{{ entry_count }} {% if entry_count == 1 %}ENTRY{% else %}ENTRIES{% endif %}]</span>
                 </div>
 
@@ -85,21 +97,13 @@
 </div>
 
 <style>
+.metadata {
+    margin-bottom: var(--medium);
+}
+
 .event-calendar {
     font-family: var(--font-main);
-    max-width: 900px;
     margin: 0 auto;
-}
-
-.calendar-header {
-    margin-bottom: 3rem;
-    text-align: center;
-}
-
-.calendar-header h1 {
-    font-size: 1.5rem;
-    color: var(--accent-secondary);
-    margin-bottom: 0.5rem;
 }
 
 .calendar-meta {

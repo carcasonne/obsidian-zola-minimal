@@ -56,6 +56,7 @@
     --font-main: 'font';
     --font-header: 'font-secondary';
     --font-size: 14px;
+    --big-font-size: 18px;
     --italic-font-size: 13px;
     --small-font-size: 12px;
     --tiny-font-size: 10px;
@@ -70,3 +71,11 @@
     --content-width: 1200px;
 }
 
+
+@media (max-width: 1400px) {
+    :root { --content-width: 900px; } /* laptop */
+}
+
+@media (max-width: 768px) {
+    :root { --content-width: calc(100% - 2rem); }
+}
