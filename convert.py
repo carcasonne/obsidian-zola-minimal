@@ -20,7 +20,8 @@ TAG_TO_DIR = {
     "book": "books",
     "article": "articles",
     "philosophy": "philosophy",
-    "event": "events",
+    # "event": "events",
+    "signal": "signals",
 }
 
 # section -> template mapping
@@ -36,7 +37,11 @@ SECTION_TEMPLATES = {
     "events": {
         "section": "event/section.html",
         "page": "event/page.html",
-    }
+    },
+    'signals': {
+        'section': 'signal/section.html',
+        'page': 'signal/page.html',
+    },
 }
 
 DEFAULT_TEMPLATES = {

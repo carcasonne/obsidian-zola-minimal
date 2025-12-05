@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-wrapper">
+    {% set total_words = 0 %}
+    {% for page in section.pages %}
+        {% set_global total_words = total_words + page.word_count %}
+    {% endfor %}
+
+    <div class="metadata">
+        <dl>
+            <dt>SECTION</dt>
+            <dd>{{ section.title }}</dd>
+            
+            <dt>ENTRIES</dt>
+            <dd>{{ section.pages | length }}</dd>
+            
+            <dt>TOTAL</dt>
+            <dd>{{ total_words }}w</dd>
+            
+            <dt>LATEST</dt>
+            <dd>D{{ section.pages | sort(attribute="updated") | last | get(key="updated") | date(format="%Y-%m-%d") }}</dd>
+        </dl>
+    </div>
+
+    {% if section.content %}
+    <div class="archive-description">
+        {{ section.content | safe }}
+    </div>
+    {% endif %}
+
+    <div class="signal-timeline">
+        {% for page in section.pages | sort(attribute="date") | reverse %}
+        <div class="signal-block">
+            <span class="signal-ts">[{{ page.date | date(format="D%Y-%m-%d T%H:%M:%S") }}]</span>
+            <div class="signal-content">
+                {% if page.extra.rubric %}
+                <span class="signal-title">{{ page.extra.rubric }}</span>
+                {% endif %}
+                <div class="signal-body">
+                    {{ page.content | safe }}
+                </div>
+            </div>
+            {% if page.extra.source != "None" %}
+            <span class="signal-type">&lt;<a href="{{ page.extra.source }}">source</a>&gt;</span>
+            {% endif %}
+            <span class="signal-type">&lt;<a href="{{ page.title }}">permalink</a>&gt;</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.archive-description {
+    margin-bottom: var(--medium);
+    color: var(--text-muted);
+}
+
+.signal-timeline {
+    margin-top: var(--large);
+    font-family: var(--font-main);
+    font-size: var(--small-font-size);
+}
+
+.signal-block {
+    display: flex;
+    gap: var(--small);
+    margin-bottom: var(--tiny);
+}
+
+.signal-block:last-child {
+    border-bottom: none;
+}
+
+.signal-block:hover {
+    background: var(--accent-highlight);
+}
+
+.signal-ts {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.signal-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.signal-title {
+    color: var(--text-muted);
+    margin-right: var(--tiny);
+}
+
+.signal-type {
+    color: var(--accent-secondary);
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.signal-body {
+    margin-top: var(--tiny);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.signal-body p {
+    margin-bottom: var(--tiny);
+}
+
+.signal-body p:last-child {
+    margin-bottom: 0;
+}
+
+.signal-body a {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.signal-body a:hover {
+    text-decoration: underline;
+}
+
+.signal-body blockquote {
+    border-left: 2px solid var(--accent-secondary);
+    padding-left: var(--small);
+    margin: var(--tiny) 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.signal-body code {
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--border-color);
+    color: var(--wired-green);
+}
+
+.signal-body pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: var(--small);
+    overflow-x: auto;
+}
+
+.signal-body pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.signal-body ul,
+.signal-body ol {
+    margin: var(--tiny) 0;
+    padding-left: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .signal-block {
+        flex-direction: column;
+        gap: var(--tiny);
+    }
+    
+    .signal-ts {
+        margin-bottom: var(--tiny);
+    }
+}
+</style>
+
+{% endblock content %}

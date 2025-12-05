@@ -4,7 +4,7 @@
   {% set docs_section = get_section(path="_index.md") %}
   {% set idx = 1 %}
   {% if docs_section.subsections %}
-    {% for subsection_path in docs_section.subsections %}
+    {% for subsection_path in docs_section.subsections | sort %}
       {% set subsection = get_section(path=subsection_path) %}
       {% if subsection.pages | length > 0 %}
         <a href="{{ subsection.permalink }}">layer:{% if idx < 10 %}0{% endif %}{{ idx }}/{{ subsection.title | lower }}</a>

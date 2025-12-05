@@ -5,7 +5,7 @@
 {% if page %}
     {% set current_section = page.components | first %}
     {% set counter = 0 %}
-    {% for subsection_path in docs_section.subsections %}
+    {% for subsection_path in docs_section.subsections | sort %}
         {% set subsection = get_section(path=subsection_path) %}
         {% if subsection.pages | length > 0 %}
             {% set_global counter = counter + 1 %}
@@ -22,7 +22,7 @@
 {% elif section and section.title != "Home" %}
     {% set current_section = section.components | first %}
     {% set counter = 0 %}
-    {% for subsection_path in docs_section.subsections %}
+    {% for subsection_path in docs_section.subsections | sort %}
         {% set subsection = get_section(path=subsection_path) %}
         {% if subsection.pages | length > 0 %}
             {% set_global counter = counter + 1 %}

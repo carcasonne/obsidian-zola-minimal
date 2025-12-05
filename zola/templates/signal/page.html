@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content-wrapper">
+    <article>
+        <div class="metadata">
+            <dl>
+                <dt>TX_ID</dt>
+                <dd>TX-{{ page.date | date(format="%Y%j%H%M") }}</dd>
+                
+                {% if page.extra.signal_type %}
+                <dt>TYPE</dt>
+                <dd>{{ page.extra.signal_type | upper }}</dd>
+                {% endif %}
+                
+                <dt>LENGTH</dt>
+                <dd>{{ page.word_count }}w</dd>
+
+                <dt>TIMESTAMP</dt>
+                <dd>{{ page.date | date(format="%Y-%m-%d %H:%M:%S") }}</dd>
+
+                {% if page.updated != page.date %}
+                <dt>MODIFIED</dt>
+                <dd>{{ page.updated | date(format="%Y-%m-%d %H:%M:%S") }}</dd>
+                {% endif %}
+                
+                {% if page.extra.source %}
+                <dt>SOURCE</dt>
+                <dd><a href="{{ page.extra.source }}" style="color: var(--accent-secondary); text-decoration: none;">{{ page.extra.source }}</a></dd>
+                {% endif %}
+            </dl>
+        </div>
+
+        <div class="signal-content">
+            {{ page.content | safe }}
+        </div>
+
+        <footer class="content-footer">
+            --- END OF TRANSMISSION ---
+        </footer>
+    </article>
+</div>
+
+<style>
+.signal-content {
+    margin-top: var(--medium);
+    font-family: var(--font-main);
+    font-size: var(--font-size);
+    line-height: 1.6;
+    max-width: 800px;
+}
+
+.signal-content p {
+    margin-bottom: var(--small);
+}
+
+.signal-content blockquote {
+    border-left: 2px solid var(--wired-green);
+    padding-left: var(--small);
+    margin: var(--small) 0;
+    font-style: italic;
+    background: rgba(64, 160, 136, 0.05);
+}
+
+.signal-content a {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.signal-content a:hover {
+    text-shadow: 0 0 4px var(--accent-primary);
+}
+
+.signal-content code {
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--border-color);
+    color: var(--wired-green);
+}
+
+.signal-content pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: var(--small);
+    overflow-x: auto;
+    margin: var(--small) 0;
+}
+
+.signal-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.signal-content ul,
+.signal-content ol {
+    margin: var(--small) 0;
+    padding-left: calc(var(--medium) * 2);
+}
+
+.signal-content li {
+    margin-bottom: 0.25rem;
+}
+</style>
+
+{% endblock content %}
