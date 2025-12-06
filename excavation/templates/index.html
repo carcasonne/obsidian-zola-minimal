@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set all_sections = get_section(path="_index.md") %}
+{% set all_pages = [] %}
+{% for section_path in all_sections.subsections %}
+    {% set section = get_section(path=section_path) %}
+    {% set_global all_pages = all_pages | concat(with=section.pages) %}
+{% endfor %}
+
+<div class="document-timeline">
+    {% for page in all_pages | sort(attribute="date") | reverse %}
+    <article class="document-entry">
+        <div class="doc-meta">
+            <span class="doc-id">document #█████</span>
+            <time datetime="{{ page.date }}">catalogued {{ page.date | date(format="%d.%b.%Y") | lower }}</time>
+        </div>
+        
+        <h2 class="doc-title">
+            <a href="{{ page.permalink }}">{{ page.title | lower }}</a>
+        </h2>
+        
+        <p class="doc-fragment">
+            {{ page.content | striptags | truncate(length=360) }}
+        </p>
+        
+        <div class="doc-filing">
+            filed: {{ page.components | first | default(value="uncategorized") }} 
+            • {{ page.word_count }}w approx.
+            {% if page.updated != page.date %}
+            • amended {{ page.updated | date(format="%d.%b") }}
+            {% endif %}
+        </div>
+
+        {# MARGINALIA BASED ON SECTION #}
+        {% set section_type = page.components | first %}
+        {% if section_type == "reviews" %}
+            <span class="margin-note-left" style="top: 15%">lit.</span>
+            {% if page.extra.rating %}
+                <span class="margin-note-right" style="top: 25%">
+                    {{ page.extra.rating | lower }}
+                </span>
+            {% endif %}
+        {% endif %}
+
+        {# PAGE NUMBER #}
+        <span class="page-num">{{ 73 + loop.index0 }}</span>
+    </article>
+    {% endfor %}
+</div>
+
+<div class="timeline-end">
+    <p>— {{ all_pages | length }} documents recovered —</p>
+</div>
+{% endblock content %}

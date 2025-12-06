@@ -1,0 +1,357 @@
+/* ============================================================================
+   RESET & BASE
+   ============================================================================ */
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--bg-tertiary);
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    max-width: calc(var(--content-width) + var(--margin-width) * 2);
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-sm);
+    box-shadow: 0 0 40px var(--shadow-paper);
+    
+    /* BRUTALITY */
+    transform: rotate(-0.05deg);
+    transform-origin: top left;
+    margin-left: 8%;
+    margin-right: 12%;
+    counter-reset: docpage 73;
+    border-left: 3px solid transparent;
+    border-image: repeating-linear-gradient(
+        0deg,
+        var(--border-fade) 0px,
+        transparent 1px,
+        transparent 3px,
+        var(--border-fade) 4px
+    ) 0 0 0 1;
+}
+
+/* fold line */
+body::after {
+    content: '';
+    position: absolute;
+    left: 52%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to right, 
+        transparent, 
+        rgba(26, 20, 16, 0.08),
+        transparent
+    );
+    pointer-events: none;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.archive-header {
+    margin-bottom: var(--space-lg);
+    border-bottom: 3px double var(--border-ink);
+    padding-bottom: var(--space-md);
+}
+
+.archive-header h1 {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: normal;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+}
+
+.tagline {
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.minimal-nav {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.minimal-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-right: var(--space-sm);
+}
+
+.minimal-nav a:hover {
+    color: var(--accent-blood);
+}
+
+/* ============================================================================
+   MAIN CONTENT
+   ============================================================================ */
+
+.archive-main {
+    margin: var(--space-lg) 0;
+}
+
+/* ============================================================================
+   DOCUMENT TIMELINE
+   ============================================================================ */
+
+.document-entry {
+    position: relative;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-fade);
+    counter-increment: docpage;
+}
+
+.document-entry:last-child {
+    border-bottom: none;
+}
+
+/* metadata */
+.doc-meta {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-faded);
+    margin-bottom: var(--space-sm);
+    display: flex;
+    justify-content: space-between;
+}
+
+.doc-id {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* title */
+.doc-title {
+    font-size: 1.4rem;
+    font-weight: normal;
+    line-height: var(--line-height-title);
+    margin-bottom: var(--space-sm);
+}
+
+.doc-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.doc-title a:hover {
+    color: var(--accent-blood);
+}
+
+/* fragment */
+.doc-fragment {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    text-indent: 2em;
+}
+
+/* filing info */
+.doc-filing {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-faded);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================================================
+   MARGINALIA (scattered annotations)
+   ============================================================================ */
+
+/* left margin - emphatic marks */
+.document-entry:nth-child(3n+1)::before {
+    content: '!!!';
+    position: absolute;
+    left: -100px;
+    top: 30%;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-faded);
+    opacity: 0.6;
+    transform: rotate(-8deg);
+}
+
+/* right margin - vertical reference */
+.document-entry:nth-child(3n+2)::before {
+    content: 'cf. archives';
+    position: absolute;
+    right: -110px;
+    top: 45%;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faded);
+    opacity: 0.5;
+    transform: rotate(5deg);
+    writing-mode: vertical-rl;
+}
+
+/* left margin - editorial doubt */
+.document-entry:nth-child(5n)::before {
+    content: 'dubious -ed.';
+    position: absolute;
+    left: -95px;
+    top: 60%;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-blood);
+    opacity: 0.4;
+    transform: rotate(-12deg);
+}
+
+/* page numbers bottom right */
+.document-entry::after {
+    content: counter(docpage);
+    position: absolute;
+    bottom: 5px;
+    right: -30px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faded);
+    opacity: 0.4;
+}
+
+.document-entry:nth-child(6n)::before {
+    content: '***';
+    position: absolute;
+    right: -70px;
+    top: 70%;
+    font-size: 16px;
+    color: var(--text-faded);
+    opacity: 0.4;
+    letter-spacing: 0.2em;
+}
+
+.margin-note-left {
+    position: absolute;
+    left: -90px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faded);
+    opacity: 0.6;
+    transform: rotate(-6deg);
+}
+
+.margin-note-right {
+    position: absolute;
+    right: -100px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faded);
+    opacity: 0.5;
+    transform: rotate(4deg);
+}
+
+.margin-note-right.annotate {
+    writing-mode: vertical-rl;
+    font-size: 11px;
+}
+
+.margin-note-left.emphatic {
+    color: var(--accent-blood);
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+.margin-note-right.faded {
+    opacity: 0.3;
+    font-size: 10px;
+}
+
+.page-num {
+    position: absolute;
+    bottom: 5px;
+    right: -30px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faded);
+    opacity: 0.4;
+}
+
+.margin-note-right[style*="excellent"],
+.margin-note-right[style*="outstanding"] {
+    color: var(--accent-blood);
+    opacity: 0.7;
+}
+
+/* ============================================================================
+   TIMELINE END
+   ============================================================================ */
+
+.timeline-end {
+    text-align: center;
+    padding: var(--space-md) 0;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-fade);
+    margin-top: var(--space-lg);
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.archive-footer {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 3px double var(--border-ink);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-faded);
+}
+
+/* ============================================================================
+   LINKS & SELECTION
+   ============================================================================ */
+
+a {
+    color: var(--text-primary);
+}
+
+a:hover {
+    color: var(--accent-blood);
+}
+
+::selection {
+    background: var(--accent-mold);
+    color: var(--bg-primary);
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 820px) {
+    body {
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+        border-left: none;
+    }
+    
+    body::after {
+        display: none;
+    }
+    
+    .document-entry::before,
+    .document-entry::after {
+        display: none;
+    }
+}

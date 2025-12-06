@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/css/page-specific/webring.css">
+{% endblock extra_head %}
+
+{% block content %}
+{% set sites = load_data(path="content/webring/webring.json") %}
+
+<div class="content-wrapper">
+    <section class="section">
+        <div class="section-header">
+            <h1>{{ section.title }}</h1>
+        </div>
+
+        {% if section.content %}
+        <div class="prose">
+            {{ section.content | safe }}
+        </div>
+        {% endif %}
+
+        <div class="webring-grid">
+            {% for site in sites %}
+            <div class="node-entry" {% if site.url %} data-url="{{ site.url }}" {% endif %}>
+                <img src="/images/banner/{{ site.img }}" 
+                     alt="Banner for {{ site.title }}"
+                     class="banner-gif">
+                <div class="node-info">
+                    <div class="node-title">{{ site.title }}</div>
+                    <div class="protocol-links">
+                        {% if site.url %}
+                        <a href="{{ site.url }}" class="protocol-link active">[HTTP:OK]</a>
+                        {% else %}
+                        <span class="protocol-link inactive">[HTTP:--]</span>
+                        {% endif %}
+                        
+                        {% if site.tor %}
+                        <a href="{{ site.tor }}" class="protocol-link active">[TOR:OK]</a>
+                        {% else %}
+                        <span class="protocol-link inactive">[TOR:--]</span>
+                        {% endif %}
+                        
+                        {% if site.i2p %}
+                        <a href="{{ site.i2p }}" class="protocol-link active">[I2P:OK]</a>
+                        {% else %}
+                        <span class="protocol-link inactive">[I2P:--]</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="webring-footer">
+            <button class="action-btn" onclick="randomNode()">random_node()</button>
+            <div class="peer-count">{{ sites | length }} peers</div>
+        </div>
+    </section>
+</div>
+
+<script>
+function randomNode() {
+    const entries = document.querySelectorAll('.node-entry');
+    const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+    window.open(randomEntry.dataset.url, '_blank');
+}
+
+document.querySelectorAll('.node-entry').forEach(entry => {
+    entry.addEventListener('click', (e) => {
+        if (!e.target.closest('.protocol-links')) {
+            window.location.href = entry.dataset.url;
+        }
+    });
+});
+</script>
+{% endblock content %}

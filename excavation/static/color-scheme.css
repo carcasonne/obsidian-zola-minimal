@@ -1,0 +1,51 @@
+:root {
+    /* aged paper - actual oxidized cellulose */
+    --bg-primary: #e8e3d8;
+    --bg-secondary: #d4cbb8;
+    --bg-tertiary: #c9bda8;
+    
+    /* ink - iron gall, faded */
+    --text-primary: #1a1410;
+    --text-secondary: #3d332a;
+    --text-muted: #5a4d42;
+    --text-faded: #7a6d5f;
+    
+    /* accents - oxidation, mold, blood */
+    --accent-blood: #6b3a1e;
+    --accent-rust: #8b5a3c;
+    --accent-mold: #4a5c4a;
+    --accent-char: #2d2419;
+    
+    /* damage */
+    --border-ink: #3d332a;
+    --border-fade: #9a8d7f;
+    --shadow-paper: rgba(0, 0, 0, 0.15);
+    
+    /* typography */
+    --font-body: 'times new roman', times, serif;
+    --font-title: 'times new roman', times, serif;
+    --font-mono: 'courier new', courier, monospace;
+    
+    --font-size: 18px;
+    --font-size-sm: 15px;
+    --font-size-xs: 13px;
+    --line-height: 1.45;
+    --line-height-title: 1.25;
+    
+    /* spacing - CRAMPED */
+    --space-xs: 0.35rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    
+    /* layout */
+    --content-width: 800px;
+    --margin-width: 120px;
+}
+
+@media (max-width: 820px) {
+    :root {
+        --content-width: calc(100% - 1.5rem);
+        --margin-width: 0;
+    }
+}

@@ -17,36 +17,32 @@ from utils import (
 
 # tag -> section mapping
 TAG_TO_DIR = {
-    "book": "books",
+    "book": "reviews",
     "article": "articles",
     "philosophy": "philosophy",
     # "event": "events",
-    "signal": "signals",
+    "signal": "fieldnotes",
 }
 
 # section -> template mapping
 SECTION_TEMPLATES = {
-    'books': {
-        'section': 'blog/section.html',
-        'page': 'book/page.html',
+    'reviews': {
+        'section': 'default/section.html',
+        'page': 'review/page.html',
     },
     'articles': {
-        'section': 'blog/section.html',
+        'section': 'default/section.html',
         'page': 'article/page.html',
     },
-    "events": {
-        "section": "event/section.html",
-        "page": "event/page.html",
-    },
-    'signals': {
-        'section': 'signal/section.html',
-        'page': 'signal/page.html',
+    'fieldnotes': {
+        'section': 'default/section.html',
+        'page': 'fieldnotes/page.html',
     },
 }
 
 DEFAULT_TEMPLATES = {
-    'section': 'blog/section.html',
-    'page': 'blog/page.html',
+    'section': 'default/section.html',
+    'page': 'default/page.html',
 }
 
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>
+        {% block title %}
+        {% if page %}
+        {{ page.title | lower }} • {{ config.title | lower }}
+        {% elif section %}
+        {{ section.title | lower }} • {{ config.title | lower }}
+        {% else %}
+        {{ config.title | lower }}
+        {% endif %}
+        {% endblock title %}
+    </title>
+    <link rel="stylesheet" href="/color-scheme.css">
+    <link rel="stylesheet" href="/style.css">
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+
+<body>
+    <header class="archive-header">
+        <h1>{{ config.title | lower }}</h1>
+        <p class="tagline">Fields notes from the Internet</p>
+        <nav class="minimal-nav">
+            <a href="/">catalog</a>
+            <a href="/indices">indices</a>
+            <a href="/about">about</a>
+        </nav>
+    </header>
+
+    <main class="archive-main">
+        {% block content %}{% endblock content %}
+    </main>
+
+    <footer class="archive-footer">
+        {% block footer %}
+        <p>— archive maintained since {{ config.extra.archive_date | default(value="19██") }} —</p>
+        {% endblock footer %}
+    </footer>
+    
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+
+</html>

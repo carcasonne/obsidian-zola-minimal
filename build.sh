@@ -27,6 +27,7 @@ echo "${SITE_URL:?}"
 echo "${REPO_URL:?}"
 echo "${LANDING_PAGE:?}"
 echo "${PYTHON:?}"
+echo "${THEME:?}"
 
 ZOLACFG="config.toml"
 
@@ -43,7 +44,7 @@ fi
 mkdir -p build
 
 rsync -a "$ZOLACFG" build/config.toml
-rsync -a zola/ build
+rsync -a "${THEME}/" build/
 rsync -a content/ build/content
 
 # obsidian-export dumps to temp dir
