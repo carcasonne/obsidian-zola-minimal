@@ -9,16 +9,12 @@
 {% endfor %}
 
 <div class="document-timeline">
-    {% for page in all_pages | sort(attribute="date") | reverse %}
+    {% for page in all_pages | sort(attribute="updated") | reverse %}
     <article class="document-entry">
         <div class="doc-meta">
-            <span class="doc-id">document #█████</span>
+            <span class="doc-id">DOCUMENT <a href="{{ page.permalink }}">{{ page.title | lower }}</a></span>
             <time datetime="{{ page.date }}">catalogued {{ page.date | date(format="%d.%b.%Y") | lower }}</time>
         </div>
-        
-        <h2 class="doc-title">
-            <a href="{{ page.permalink }}">{{ page.title | lower }}</a>
-        </h2>
         
         <p class="doc-fragment">
             {{ page.content | striptags | truncate(length=360) }}
@@ -34,11 +30,23 @@
 
         {# MARGINALIA BASED ON SECTION #}
         {% set section_type = page.components | first %}
+
         {% if section_type == "reviews" %}
-            <span class="margin-note-left" style="top: 15%">lit.</span>
+            {% if "book" in page.extra.tags %}
+                <span class="margin-note-left rotate-2deg" style="top: 15%">lit.</span>
+            {% endif %}
             {% if page.extra.rating %}
                 <span class="margin-note-right" style="top: 25%">
                     {{ page.extra.rating | lower }}
+                </span>
+            {% endif %}
+        {% endif %}
+
+        {% if section_type == "articles" %}
+            <span class="margin-note-left" style="top: 15%">thoughts</span>
+            {% if page.extra.theme %}
+                <span class="margin-note-right" style="top: 25%">
+                    {{ page.extra.theme | lower }}
                 </span>
             {% endif %}
         {% endif %}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -16,8 +16,13 @@
         {% endif %}
         {% endblock title %}
     </title>
-    <link rel="stylesheet" href="/color-scheme.css">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/color-scheme.css">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = savedTheme;
+    </script>
     {% block extra_head %}{% endblock extra_head %}
 </head>
 
@@ -27,8 +32,11 @@
         <p class="tagline">Fields notes from the Internet</p>
         <nav class="minimal-nav">
             <a href="/">catalog</a>
-            <a href="/indices">indices</a>
+            <a href="/index">index</a>
             <a href="/about">about</a>
+            <button id="theme-toggle" class="archive-toggle">
+                [lamp]
+            </button>
         </nav>
     </header>
 
@@ -44,5 +52,39 @@
     
     {% block extra_js %}{% endblock extra_js %}
 </body>
+
+<script>
+const THEMES = ['light', 'dark', 'blueprint'];
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    const current = localStorage.getItem('theme') || 'light';
+    const idx = THEMES.indexOf(current);
+    const next = THEMES[(idx + 1) % THEMES.length];
+    
+    localStorage.setItem('theme', next);
+    document.documentElement.dataset.theme = next;
+});
+</script>
+
+<style>
+.archive-toggle {
+    background: none;
+    border: 1px solid var(--border-fade);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    float: right;
+}
+
+.archive-toggle:hover {
+    border-color: var(--accent-blood);
+    color: var(--accent-blood);
+}
+</style>
 
 </html>

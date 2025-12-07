@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/css/page-specific/article.css">
+{% endblock extra_head %}
+
+{% block content %}
+<article class="article-document">
+    {# HEADER BLOCK #}
+    <header class="article-header">
+        <h1 class="article-title">{{ page.title}}</h1>
+    </header>
+
+    {# METADATA BAR #}
+    <div class="article-metadata">
+        <div class="meta-row">
+            {% if page.extra.status %}
+            <span class="meta-item status-{{ page.extra.status | lower }}">STATUS: {{ page.extra.status | lower }}</span>
+            {% endif %}
+            
+            <span class="meta-item rating-excellent">excellent</span>
+        </div>
+        
+        <div class="meta-row">
+            {% if page.extra.theme %}
+            <span class="meta-item">THEME: {{ page.extra.theme | lower }}</span>
+            {% endif %}
+            
+            <span class="meta-item">
+                CATALOGUED: {{ page.date | date(format="%d.%b.%Y") | lower }}
+            </span>
+        </div>
+        
+        {% if page.updated and page.updated != page.date %}
+        <div class="meta-row">
+            <span class="meta-item">AMENDED: {{ page.updated | date(format="%d.%b.%Y") | lower }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# MAIN CONTENT #}
+    <div class="article-content">
+        {{ page.content | safe }}
+    </div>
+
+    {# FILING FOOTER #}
+    <footer class="article-footer">
+        <div class="filing-separator">═══════════════════════════════════════════════════</div>
+        
+        <div class="filing-info">
+            {% if page.extra.tags %}
+            <div class="filing-tags">
+                <span class="filing-label">FILED UNDER: </span>
+                {% for tag in page.extra.tags %}
+                <a href="/index#{{ tag | slugify }}" class="tag-item">{{ tag | lower }}</a>{% if not loop.last %} • {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="filing-dates">
+                <span class="filing-label">ORIGINAL CATALOGUING: </span>
+                <time datetime="{{ page.date }}">{{ page.date | date(format="%d.%b.%Y") | lower }}</time>
+            </div>
+
+            <div class="filing-dates">
+                {% if page.updated and page.updated != page.date %}
+                <span class="filing-label">LAST AMENDED: </span>
+                <time datetime="{{ page.updated }}">{{ page.updated | date(format="%d.%b.%Y") | lower }}</time>
+                {% endif %}
+            </div>
+        </div>
+
+    </footer>
+
+    {# MARGINALIA #}
+    <span class="margin-note-left" style="top: 8%">signal</span>
+    
+    <span class="margin-note-right" style="top: 12%">excellent</span>
+    
+    {% if page.extra.status %}
+    <span class="margin-note-left" style="top: 45%">{{ page.extra.status | lower }}</span>
+    {% endif %}
+    
+    <span class="margin-note-right annotate" style="top: 65%">field archives</span>
+</article>
+
+{% endblock content %}

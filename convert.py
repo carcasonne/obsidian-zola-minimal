@@ -21,7 +21,7 @@ TAG_TO_DIR = {
     "article": "articles",
     "philosophy": "philosophy",
     # "event": "events",
-    "signal": "fieldnotes",
+    "fieldnote": "fieldnotes",
 }
 
 # section -> template mapping
@@ -158,7 +158,10 @@ def process_page(
     ]
     for key, value in extras.items():
         if isinstance(value, list):
-            frontmatter.append(f'    {key}: {value}')
+            frontmatter.append(f'    {key}: [')
+            for item in value:
+                frontmatter.append(f'        "{item}",')
+            frontmatter.append('    ]')
         else:
             frontmatter.append(f'    {key}: "{value}"')
 

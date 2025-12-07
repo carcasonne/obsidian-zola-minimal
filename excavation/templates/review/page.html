@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/css/page-specific/review.css">
+{% endblock extra_head %}
+
+{% block content %}
+<article class="review-document">
+    <header class="review-header">
+        <h1 class="review-title">{{ page.title}}</h1>
+        {% if page.extra.author %}
+        <div class="review-author">{{ page.extra.author}}</div>
+        {% endif %}
+    </header>
+
+    <div class="review-metadata">
+        <div class="meta-row">
+            {% if page.extra.read %}
+            <span class="meta-item">READ: {{ page.extra.read | date(format="%d.%b.%Y") | lower }}</span>
+            {% endif %}
+            
+            {% if page.extra.rating %}
+            <span class="meta-item rating-{{ page.extra.rating | lower }}">{{ page.extra.rating | lower }}</span>
+            {% endif %}
+        </div>
+        
+        <div class="meta-row">
+            {% if page.extra.language %}
+            <span class="meta-item">
+                LANGUAGE: {{ page.extra.language | lower }}
+                {% if page.extra.original_language and page.extra.original_language != page.extra.language %}
+                from {{ page.extra.original_language | lower }}
+                {% endif %}
+            </span>
+            {% endif %}
+            
+            {% if page.extra.format %}
+            <span class="meta-item">{{ page.extra.format | lower }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="review-content">
+        {{ page.content | safe }}
+    </div>
+
+    {# FILING FOOTER - archival metadata #}
+    <footer class="review-footer">
+        <div class="filing-separator">═══════════════════════════════════════════════════</div>
+        
+        <div class="filing-info">
+            {% if page.extra.tags %}
+            <div class="filing-tags">
+                <span class="filing-label">FILED UNDER: </span>
+                {% for tag in page.extra.tags %}
+                <a href="/index#{{ tag | slugify }}" class="tag-item">{{ tag | lower }}</a>{% if not loop.last %} • {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="filing-dates">
+                <span class="filing-label">ORIGINAL CATALOGUING: </span>
+                <time datetime="{{ page.date }}">{{ page.date | date(format="%d.%b.%Y") | lower }}</time>
+            </div>
+
+            <div class="filing-dates">
+                {% if page.updated and page.updated != page.date %}
+                <span class="filing-label">LAST AMENDED: </span>
+                <time datetime="{{ page.updated }}">{{ page.updated | date(format="%d.%b.%Y") | lower }}</time>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+
+    {# MARGINALIA #}
+    {% if page.extra.author %}
+    <span class="margin-note-left" style="top: 8%">lit.</span>
+    {% endif %}
+    
+    {% if page.extra.rating %}
+    <span class="margin-note-right" style="top: 12%">
+        {{ page.extra.rating | lower }}
+    </span>
+    {% endif %}
+    
+    {% if page.extra.original_language and page.extra.original_language != page.extra.language %}
+    <span class="margin-note-left" style="top: 45%">translation</span>
+    {% endif %}
+    
+    <span class="margin-note-right annotate" style="top: 65%">cf. archives</span>
+</article>
+
+{% endblock content %}

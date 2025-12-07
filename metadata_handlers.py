@@ -3,12 +3,11 @@ Metadata handlers: dump everything except tags into frontmatter extra.
 tags handled separately bc routing logic, everything else just goes through.
 """
 
-SKIP_FIELDS = {'tags', 'created', 'modified', 'title'}  # handled elsewhere
+SKIP_FIELDS = {'created', 'modified', 'title'}  # handled elsewhere
 
 def get_frontmatter_extras(metadata: dict) -> dict:
-    """just pass through everything that's not special-cased"""
     return {
-        key.replace('-', '_'): str(value).strip() # zola can't handle dashes in vars, only underscores 
+        key.replace('-', '_'): str(value).strip() if not isinstance(value, list) else value
         for key, value in metadata.items() 
         if key not in SKIP_FIELDS
     }

@@ -1,3 +1,15 @@
+@font-face {
+    font-family: "monospace";
+    src: url('/fonts/MonaSpace/MonaspaceArgon-Regular.woff') format("woff");
+    font-feature-setting:'cv06','cv14','cv16','cv27','cv29','cv31','cv32','ss01','ss02','ss04','ss06','ss07','ss09'!important;
+}
+
+@font-face {
+    font-family: "cormorant";
+    src: url("/fonts/Cormorant-Regular.ttf") format("truetype");
+    font-feature-setting:'cv06','cv14','cv16','cv27','cv29','cv31','cv32','ss01','ss02','ss04','ss06','ss07','ss09'!important;
+}
+
 :root {
     /* aged paper - actual oxidized cellulose */
     --bg-primary: #e8e3d8;
@@ -22,8 +34,99 @@
     --shadow-paper: rgba(0, 0, 0, 0.15);
     
     /* typography */
-    --font-body: 'times new roman', times, serif;
-    --font-title: 'times new roman', times, serif;
+    --font-body: "cormorant", "monospace", "times new roman", times, serif;
+    --font-title: "cormorant", "monospace", "times new roman", times, serif;
+    --font-mono: 'courier new', courier, monospace;
+    
+    --font-size: 18px;
+    --font-size-sm: 15px;
+    --font-size-xs: 13px;
+    --line-height: 1.45;
+    --line-height-title: 1.25;
+    
+    /* spacing - CRAMPED */
+    --space-xs: 0.35rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    
+    /* layout */
+    --content-width: 800px;
+    --margin-width: 120px;
+}
+
+
+[data-theme="dark"] {
+    /* basement archive - concrete dust, old wood, must */
+    --bg-primary: #0e0c09;
+    --bg-secondary: #1a1510;
+    --bg-tertiary: #252017;
+    
+    /* phosphor glow - amber terminal meets candlelight */
+    --text-primary: #e8dcc8;
+    --text-secondary: #c4b49a;
+    --text-muted: #9a8872;
+    --text-faded: #6b5d4f;
+    
+    /* accents - decay in darkness */
+    --accent-blood: #8b4a2e;
+    --accent-rust: #a66b47;
+    --accent-mold: #4a5c4a;
+    --accent-char: #d4c4a8;
+    
+    /* damage - but in shadow */
+    --border-ink: #3d3529;
+    --border-fade: #2a2318;
+    --shadow-paper: rgba(0, 0, 0, 0.6);
+    
+    /* typography */
+    --font-body: "cormorant", "monospace", "times new roman", times, serif;
+    --font-title: "cormorant", "monospace", "times new roman", times, serif;
+    --font-mono: 'courier new', courier, monospace;
+    
+    --font-size: 18px;
+    --font-size-sm: 15px;
+    --font-size-xs: 13px;
+    --line-height: 1.45;
+    --line-height-title: 1.25;
+    
+    /* spacing - CRAMPED */
+    --space-xs: 0.35rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    
+    /* layout */
+    --content-width: 800px;
+    --margin-width: 120px;
+}
+
+[data-theme="blueprint"] {
+        /* cyanotype blues faded to grey */
+    --bg-primary: #d4dde8;
+    --bg-secondary: #c4d1dd;
+    --bg-tertiary: #b8c8d6;
+    
+    /* prussian blue-black */
+    --text-primary: #1a2433;
+    --text-secondary: #2d3d4a;
+    --text-muted: #4a5561;
+    --text-faded: #6b7580;
+    
+    /* rust bleed, graphite, survey marks */
+    --accent-blood: #a24936;
+    --accent-rust: #8b5a3c;
+    --accent-mold: #4a4d52;
+    --accent-char: #1f2832;
+    
+    /* technical damage */
+    --border-ink: #2d3d4a;
+    --border-fade: #8a96a3;
+    --shadow-paper: rgba(26, 36, 51, 0.10);
+    
+    /* typography */
+    --font-body: "cormorant", "monospace", "times new roman", times, serif;
+    --font-title: "cormorant", "monospace", "times new roman", times, serif;
     --font-mono: 'courier new', courier, monospace;
     
     --font-size: 18px;

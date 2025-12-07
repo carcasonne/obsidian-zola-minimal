@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tag-index">
+    {% set all_sections = get_section(path="_index.md") %}
+    {% set all_pages = [] %}
+    {% for section_path in all_sections.subsections %}
+        {% set section = get_section(path=section_path) %}
+        {% set_global all_pages = all_pages | concat(with=section.pages) %}
+    {% endfor %}
+
+    {# collect all unique tags #}
+    {% set_global all_tags = [] %}
+    {% for page in all_pages %}
+        {% if page.extra.tags %}
+            {% for tag in page.extra.tags %}
+                {% if tag not in all_tags %}
+                    {% set_global all_tags = all_tags | concat(with=tag) %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    {# for each tag, find matching pages #}
+    {% for tag in all_tags | sort %}
+    <section class="tag-section" id="{{ tag | slugify }}">
+        <h2>{{ tag }}</h2>
+        <ul>
+        {% for page in all_pages %}
+            {% if page.extra.tags and tag in page.extra.tags %}
+            <li><a href="{{ page.permalink }}">{{ page.title }}</a></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+</div>
+
+<style>
+    .tag-index {
+    column-count: 3;
+    column-gap: var(--space-lg);
+    column-rule: 1px solid var(--border-fade);
+}
+
+.tag-section {
+    break-inside: avoid;
+    margin-bottom: var(--space-md);
+}
+
+.tag-section h2 {
+    font-family: var(--font-mono);
+    font-size: var(--font-size);
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--border-ink);
+    padding-bottom: var(--space-xs);
+}
+
+.tag-section ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tag-section li {
+    font-size: var(--font-size-sm);
+    margin-bottom: 0.2rem;
+    text-indent: 1em;
+}
+
+.tag-section li::before {
+    content: '→ ';
+    margin-left: -1em;
+    color: var(--text-faded);
+}
+
+.tag-section a {
+    text-decoration: none;
+    color: var(--text-secondary);
+}
+
+.tag-section a:hover {
+    color: var(--accent-blood);
+}
+
+@media (max-width: 820px) {
+    .tag-index {
+        column-count: 1;
+    }
+}
+</style>
+
+{% endblock content %}

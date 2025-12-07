@@ -1,3 +1,39 @@
 {% extends "base.html" %}
 
-<h1>hejsa</h1>
+{% block content %}
+<div class="document-timeline">
+    <article class="document-entry">
+        <div class="doc-meta">
+            <span class="doc-id">Catalogue ERROR #404</span>
+            <time datetime="{{ now() | date(format="%Y-%m-%d") }}">CATALOGUED {{ now() | date(format="%d.%b.%Y") | lower }}</time>
+        </div>
+        
+        <h2 class="doc-title">
+            Reference not found.
+        </h2>
+        
+        <div class="doc-fragment">
+            The requested document does not appear in any known index.
+            Probable causes: 
+            <ul>
+                <li>Misfiled during reorganization.</li>
+                <li>Never catalogued.</li>
+                <li><span style="text-decoration: line-through; color: var(--text-faded);">Removed by previous archivist</span></li>
+                <li>Destroyed in [REDACTED] incident.</li>
+            </ul>
+        </div>
+        
+        <div class="doc-filing">
+            consult <a href="/">main catalogue</a> or contact duty archivist • status: unresolved
+        </div>
+
+        <span class="margin-note-left" style="top: 20%">error</span>
+        <span class="margin-note-right" style="top: 35%; writing-mode: vertical-rl; opacity: 0.4;">some things are better left unfiled</span>
+        <span class="page-num">—</span>
+    </article>
+</div>
+
+<div class="timeline-end">
+    <p>— document {{ current_url | default(value="reference corrupted") }} —</p>
+</div>
+{% endblock content %}
