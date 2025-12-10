@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="review-document">
+    <header class="review-header">
+        <h1 class="review-title">{{ page.extra.rubric }}</h1>
+    </header>
+
+    <div class="review-metadata">
+        <div class="meta-row">
+            <span class="meta-item">OBSERVED: {{ page.date | date(format="%d.%b.%Y") | lower }}</span>
+        </div>
+        
+        {% if page.extra.location %}
+        <div class="meta-row">
+            <span class="meta-item">AT: {{ page.extra.location | lower }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="review-content">
+        {{ page.content | safe }}
+    </div>
+
+    
+    <footer class="review-footer" style="margin-top: 0; padding-top: 0">
+        <div class="filing-separator">═══════════════════════════════════════════════════</div>
+        <div class="filing-info">
+            {% if page.extra.source != "None" %}
+            <div class="filing-dates">
+                <span class="filing-label">SOURCE: </span>
+                 <a href="{{ page.extra.source }}">{{ page.extra.source }}</a>
+            </div>
+            {% endif %}
+    
+            <div class="filing-dates">
+                <span class="filing-label">PERMALINK: </span>
+                 <a href="{{ page.permalink }}">{{ page.permalink }}</a>
+            </div>
+            
+            {% if page.extra.tags %}
+            <div class="filing-tags">
+                <span class="filing-label">FILED UNDER: </span>
+                {% for tag in page.extra.tags %}
+                {% if tag != "fieldnote" %}
+                <a href="/index#{{ tag | slugify }}" class="tag-item">{{ tag | lower }}</a>{% if not loop.last %} • {% endif %}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            
+            <div class="filing-dates">
+                <span class="filing-label">ORIGINAL CATALOGUING: </span>
+                <time datetime="{{ page.date }}">{{ page.date | date(format="%d.%b.%Y") | lower }}</time>
+            </div>
+
+            <div class="filing-dates">
+                {% if page.updated and page.updated != page.date %}
+                <span class="filing-label">LAST AMENDED: </span>
+                <time datetime="{{ page.updated }}">{{ page.updated | date(format="%d.%b.%Y") | lower }}</time>
+                {% endif %}
+            </div>
+
+        </div>
+    </footer>
+
+    {# MARGINALIA #}  
+    {% if page.extra.mood %}
+        {% set moods = page.extra.mood %}
+        {% if moods is string %}
+            {% set mood_list = [moods] %}
+        {% else %}
+            {% set mood_list = moods %}
+        {% endif %}
+        
+        {% set rotations = ["-6deg", "4deg", "3deg", "5deg", "-4deg", "6deg"] %}
+        {% set positions = ["12%", "28%", "44%", "60%", "76%", "20%"] %}
+        
+        {% for mood in mood_list %}
+            {% set pos_idx = loop.index0 %}
+            {% if pos_idx >= 6 %}
+                {% set pos_idx = pos_idx - 6 %}
+            {% endif %}
+            
+            {% set side = loop.index0 % 2 %}
+            
+            {% if side == 0 %}
+            <span class="margin-note-right" style="top: {{ positions[pos_idx] }}; transform: rotate({{ rotations[pos_idx] }});">
+                {{ mood | lower }}
+            </span>
+            {% else %}
+            <span class="margin-note-left" style="top: {{ positions[pos_idx] }}; transform: rotate({{ rotations[pos_idx] }});">
+                {{ mood | lower }}
+            </span>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</article>
+
+<style>
+    p {
+        text-indent: 0 !important;
+    }
+</style>
+
+{% endblock content %}

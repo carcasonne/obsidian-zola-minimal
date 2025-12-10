@@ -7,7 +7,22 @@
 @font-face {
     font-family: "cormorant";
     src: url("/fonts/Cormorant-Regular.ttf") format("truetype");
-    font-feature-setting:'cv06','cv14','cv16','cv27','cv29','cv31','cv32','ss01','ss02','ss04','ss06','ss07','ss09'!important;
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "cormorant";
+    src: url("/fonts/Cormorant-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "cormorant";
+    src: url("/fonts/Cormorant-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
 }
 
 :root {
@@ -99,6 +114,8 @@
     /* layout */
     --content-width: 800px;
     --margin-width: 120px;
+
+    font-weight: 500;
 }
 
 [data-theme="blueprint"] {
@@ -116,7 +133,7 @@
     /* rust bleed, graphite, survey marks */
     --accent-blood: #a24936;
     --accent-rust: #8b5a3c;
-    --accent-mold: #4a4d52;
+    --accent-mold: #2b4d36;
     --accent-char: #1f2832;
     
     /* technical damage */

@@ -7,7 +7,7 @@ SESSION="obsidian-zola"
 tmux has-session -t $SESSION 2>/dev/null && tmux kill-session -t $SESSION
 
 tmux new-session -d -s $SESSION -n "zola"
-tmux send-keys -t $SESSION:0 ". ./env.sh && zola --root=build serve" C-m
+tmux send-keys -t $SESSION:0 ". ./env.sh && excavation --root=build serve" C-m
 
 tmux new-window -t $SESSION:1 -n "ide"
 tmux send-keys -t $SESSION:1 "code ." C-m

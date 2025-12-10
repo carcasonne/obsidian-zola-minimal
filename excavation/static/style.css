@@ -159,7 +159,7 @@ body::after {
 .doc-filing {
     font-family: var(--font-mono);
     font-size: var(--font-size-xs);
-    color: var(--text-faded);
+    color: var(--accent-mold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -687,9 +687,12 @@ a:hover {
    RESPONSIVE
    ============================================================================ */
 
-@media (max-width: 820px) {
+@media (max-width: 840px) {
     body {
         padding: var(--space-lg) var(--space-sm);
+        margin-left: 0;
+        margin-right: 0;
+        transform: none;
     }
     
     .margin-note-left,
