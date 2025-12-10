@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<article class="review-document">
-    <header class="review-header">
-        <h1 class="review-title">{{ page.extra.rubric }}</h1>
+<article class="content-document">
+    <header class="content-header">
+        <h1 class="content-title">{{ page.extra.rubric }}</h1>
     </header>
 
-    <div class="review-metadata">
+    <div class="content-metadata">
         <div class="meta-row">
             <span class="meta-item">OBSERVED: {{ page.date | date(format="%d.%b.%Y") | lower }}</span>
         </div>
@@ -18,12 +18,12 @@
         {% endif %}
     </div>
 
-    <div class="review-content">
+    <div class="content">
         {{ page.content | safe }}
     </div>
 
     
-    <footer class="review-footer" style="margin-top: 0; padding-top: 0">
+    <footer class="content-footer" style="margin-top: 0; padding-top: 0">
         <div class="filing-separator">═══════════════════════════════════════════════════</div>
         <div class="filing-info">
             {% if page.extra.source != "None" %}

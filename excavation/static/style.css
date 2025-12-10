@@ -352,22 +352,19 @@ a:hover {
    SHARED DOCUMENT STYLES (review/article pages)
    ============================================================================ */
 
-.review-document,
-.article-document {
+.content-document {
     position: relative;
     max-width: var(--content-width);
     margin: 0 auto;
 }
 
-.review-header,
-.article-header {
+.content-header {
     margin-bottom: var(--space-md);
     padding-bottom: var(--space-sm);
     border-bottom: 3px solid var(--border-ink);
 }
 
-.review-title,
-.article-title {
+.content-title {
     font-family: var(--font-title);
     font-size: 2.5rem;
     font-weight: normal;
@@ -382,8 +379,7 @@ a:hover {
     font-style: italic;
 }
 
-.review-metadata,
-.article-metadata {
+.content-metadata {
     font-family: var(--font-mono);
     font-size: var(--font-size-xs);
     color: var(--text-muted);
@@ -437,31 +433,26 @@ a:hover {
     color: var(--text-muted);
 }
 
-.review-content,
-.article-content {
+.content {
     margin: var(--space-lg) 0;
     line-height: var(--line-height);
 }
 
-.review-content p,
-.article-content p {
+.content p {
     margin-bottom: var(--space-md);
     text-align: justify;
     hyphens: auto;
 }
 
-.review-content p:first-child,
-.article-content p:first-child {
+.content p:first-child {
     text-indent: 0;
 }
 
-.review-content p + p,
-.article-content p + p {
+.content p + p {
     text-indent: 2em;
 }
 
-.review-content blockquote,
-.article-content blockquote {
+.content blockquote {
     margin: var(--space-md) 0;
     margin-left: var(--space-lg);
     padding-left: var(--space-md);
@@ -470,38 +461,31 @@ a:hover {
     color: var(--text-secondary);
 }
 
-.review-content blockquote p,
-.article-content blockquote p {
+.content blockquote p {
     margin-bottom: var(--space-sm);
     text-indent: 0;
 }
 
-.review-content em,
-.article-content em {
+.content em {
     font-style: italic;
 }
 
-.review-content strong,
-.article-content strong {
+.content strong {
     font-weight: bold;
     color: var(--text-primary);
 }
 
-.review-content ul,
-.article-content ul,
-.review-content ol,
-.article-content ol {
+.content ul,
+.content ol {
     margin: var(--space-md) 0;
     margin-left: var(--space-lg);
 }
 
-.review-content li,
-.article-content li {
+.content li {
     margin-bottom: var(--space-xs);
 }
 
-.review-content h2,
-.article-content h2 {
+.content h2 {
     font-size: 1.3rem;
     font-weight: normal;
     margin-top: var(--space-lg);
@@ -510,8 +494,7 @@ a:hover {
     padding-bottom: var(--space-xs);
 }
 
-.review-content h3,
-.article-content h3 {
+.content h3 {
     font-size: 1.1rem;
     font-weight: normal;
     margin-top: var(--space-md);
@@ -519,15 +502,14 @@ a:hover {
     font-family: var(--font-mono);
 }
 
-.review-content img,
-.article-content img {
+.content img {
     max-width: 100%;
     height: auto;
     margin: var(--space-md) 0;
     display: block;
 }
 
-.article-content table {
+.content table {
     width: 100%;
     margin: var(--space-md) 0;
     border-collapse: collapse;
@@ -535,7 +517,7 @@ a:hover {
     font-size: var(--font-size-sm);
 }
 
-.article-content th {
+.content th {
     text-align: left;
     padding: var(--space-xs) var(--space-sm);
     border-bottom: 2px solid var(--border-ink);
@@ -545,17 +527,16 @@ a:hover {
     font-size: var(--font-size-xs);
 }
 
-.article-content td {
+.content td {
     padding: var(--space-xs) var(--space-sm);
     border-bottom: 1px solid var(--border-fade);
 }
 
-.article-content tr:last-child td {
+.content tr:last-child td {
     border-bottom: none;
 }
 
-.review-footer,
-.article-footer {
+.content-footer {
     margin-top: var(--space-lg);
     padding-top: var(--space-md);
 }
@@ -603,10 +584,8 @@ a:hover {
     color: var(--text-secondary);
 }
 
-.review-document .margin-note-left,
-.article-document .margin-note-left,
-.review-document .margin-note-right,
-.article-document .margin-note-right {
+.content-document .margin-note-left,
+.content-document .margin-note-right {
     position: absolute;
     font-family: var(--font-mono);
     font-size: 12px;
@@ -614,54 +593,48 @@ a:hover {
     opacity: 0.6;
 }
 
-.review-document .margin-note-left,
-.article-document .margin-note-left {
+.content-document .margin-note-left {
     left: -90px;
     transform: rotate(-6deg);
+    word-wrap: break-word;
+    max-width: 80px;
 }
 
-.review-document .margin-note-right,
-.article-document .margin-note-right {
+.content-document .margin-note-right {
     right: -100px;
     transform: rotate(4deg);
 }
 
-.review-document .margin-note-right.annotate,
-.article-document .margin-note-right.annotate {
+.content-document .margin-note-right.annotate {
     writing-mode: vertical-rl;
     font-size: 11px;
 }
 
-.review-document .margin-note-right[style*="excellent"],
-.article-document .margin-note-right[style*="excellent"],
-.review-document .margin-note-right[style*="outstanding"] {
+.content-document .margin-note-right[style*="excellent"],
+.content-document .margin-note-right[style*="outstanding"] {
     color: var(--accent-blood);
     opacity: 0.7;
     font-weight: bold;
 }
 
-.review-content a[href^="/"]:not([href*="."]),
-.article-content a[href^="/"]:not([href*="."]) {
+.content a[href^="/"]:not([href*="."]) {
     color: var(--text-primary);
     text-decoration: none;
     border-bottom: 1px dotted var(--border-ink);
 }
 
-.review-content a[href^="/"]:not([href*="."]):hover,
-.article-content a[href^="/"]:not([href*="."]):hover {
+.content a[href^="/"]:not([href*="."]):hover {
     color: var(--accent-blood);
     border-bottom-style: solid;
 }
 
-.review-content a[href^="http"],
-.article-content a[href^="http"] {
+.content a[href^="http"] {
     color: var(--text-secondary);
     text-decoration: underline;
     text-decoration-style: dotted;
 }
 
-.review-content a[href^="http"]:hover,
-.article-content a[href^="http"]:hover {
+.content a[href^="http"]:hover {
     color: var(--accent-blood);
 }
 

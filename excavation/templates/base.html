@@ -64,6 +64,23 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
     localStorage.setItem('theme', next);
     document.documentElement.dataset.theme = next;
 });
+
+document.querySelectorAll('.content a[href^="http"]').forEach((link, i) => {
+    const note = document.createElement('span');
+    const phrases = ['ext. ref.', 'cf. web', 'external', 'outside', 'www'];
+    const rotations = ['-4deg', '3deg', '1deg', '5deg'];
+    const tops = ['15%', '35%', '55%', '75%', '25%'];
+    
+    note.className = i % 2 === 0 ? 'margin-note-right' : 'margin-note-left';
+    note.textContent = phrases[i % phrases.length];
+    note.style.top = tops[i % tops.length];
+    note.style.transform = `rotate(${rotations[i % rotations.length]})`;
+    note.style.position = 'absolute';
+    
+    link.parentElement.style.position = 'relative';
+    link.parentElement.appendChild(note);
+});
+
 </script>
 
 <style>
